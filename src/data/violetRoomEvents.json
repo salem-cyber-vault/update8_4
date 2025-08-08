@@ -1,0 +1,26 @@
+[
+  {
+    "id": "divine-interruption",
+    "title": "Divine Interruption",
+    "summary": "A city’s silence after the breach. The blue-lit server room, empty as a chapel at midnight.",
+    "fragment": "She prays for the connection to return. Outside, the streetlights flicker like candles.",
+    "plain_explanation": "A cyberattack disrupted communications. The digital world feels sacred and fragile.",
+    "source": "https://www.wired.com/story/blackout-hackers-ukraine-russia/"
+  },
+  {
+    "id": "psalm-of-loss",
+    "title": "Psalm of Loss",
+    "summary": "A lost message. A vanished account. The code remembers what we forget.",
+    "fragment": "Not every prayer is answered. Some are stored in backup, unread.",
+    "plain_explanation": "A data breach or deletion event. Some information is lost, some hidden.",
+    "source": "https://www.techrepublic.com/article/data-breach/"
+  },
+  {
+    "id": "confession-in-the-cloud",
+    "title": "Confession in the Cloud",
+    "summary": "She uploads her secrets. The cloud keeps them, or lets them go.",
+    "fragment": "Files drift like incense. Somewhere, a server is burning.",
+    "plain_explanation": "Sensitive data was uploaded to the cloud. Security is uncertain.",
+    "source": "https://www.theguardian.com/technology/2023/aug/13/cloud-data-leak"
+  }
+]

@@ -15,6 +15,7 @@ import { BeginnerGuide } from "@/components/beginner-guide"
 import { FloatingParticles } from "@/components/floating-particles"
 import { FloatingEyes } from "@/components/floating-eyes"
 import { ComprehensiveIntelligenceWidget } from "@/components/comprehensive-intelligence-widget"
+import { EnhancedComprehensiveIntelligenceWidget } from "@/components/enhanced-comprehensive-intelligence-widget"
 import { SettingsPanel } from "@/components/settings-panel"
 import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle, Settings, Brain } from "lucide-react"
 
@@ -124,7 +125,7 @@ export default function CyberWatchVault() {
             {showSettings ? (
               <SettingsPanel onClose={() => setShowSettings(false)} />
             ) : (
-              <ComprehensiveIntelligenceWidget />
+              <EnhancedComprehensiveIntelligenceWidget />
             )}
           </TabsContent>
 

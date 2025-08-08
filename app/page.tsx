@@ -14,6 +14,8 @@ import { GoogleDorkExplorer } from "@/components/google-dork-explorer"
 import { BeginnerGuide } from "@/components/beginner-guide"
 import { FloatingParticles } from "@/components/floating-particles"
 import { FloatingEyes } from "@/components/floating-eyes"
+import { EvidenceTimelineNotebook } from "@/components/evidence-timeline-notebook"
+import { ExplainThisTooltip } from "@/components/explain-this-tooltip"
 import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle } from "lucide-react"
 
 export default function CyberWatchVault() {
@@ -66,11 +68,11 @@ export default function CyberWatchVault() {
           <div className="flex justify-center gap-4 flex-wrap">
             <Badge variant="outline" className="glass-card-feminine text-pink-300 border-pink-300/30 backdrop-blur-md">
               <Shield className="w-4 h-4 mr-2" />
-              CVE Intelligence
+              <ExplainThisTooltip term="CVE">CVE Intelligence</ExplainThisTooltip>
             </Badge>
             <Badge variant="outline" className="glass-card-feminine text-purple-300 border-purple-300/30 backdrop-blur-md">
               <Search className="w-4 h-4 mr-2" />
-              Shodan Pro Explorer
+              <ExplainThisTooltip term="Shodan">Shodan Pro Explorer</ExplainThisTooltip>
             </Badge>
             <Badge variant="outline" className="glass-card-feminine text-blue-300 border-blue-300/30 backdrop-blur-md">
               <Globe className="w-4 h-4 mr-2" />
@@ -92,19 +94,19 @@ export default function CyberWatchVault() {
             </TabsTrigger>
             <TabsTrigger value="cve" className="data-[state=active]:bg-purple-500/30 data-[state=active]:text-purple-100 text-slate-300 hover:text-purple-200 transition-all">
               <Shield className="w-4 h-4 mr-2" />
-              CVE Intel
+              <ExplainThisTooltip term="CVE">CVE Intel</ExplainThisTooltip>
             </TabsTrigger>
             <TabsTrigger value="threats" className="data-[state=active]:bg-blue-500/30 data-[state=active]:text-blue-100 text-slate-300 hover:text-blue-200 transition-all">
               <Globe className="w-4 h-4 mr-2" />
-              Evidence
+              Evidence & Timeline
             </TabsTrigger>
             <TabsTrigger value="botnets" className="data-[state=active]:bg-indigo-500/30 data-[state=active]:text-indigo-100 text-slate-300 hover:text-indigo-200 transition-all">
               <Bot className="w-4 h-4 mr-2" />
-              Case Notes
+              <ExplainThisTooltip term="Botnet">Live Threats</ExplainThisTooltip>
             </TabsTrigger>
             <TabsTrigger value="dorking" className="data-[state=active]:bg-teal-500/30 data-[state=active]:text-teal-100 text-slate-300 hover:text-teal-200 transition-all">
               <Eye className="w-4 h-4 mr-2" />
-              Explore
+              <ExplainThisTooltip term="Google Dorking">OSINT Explore</ExplainThisTooltip>
             </TabsTrigger>
             <TabsTrigger value="guide" className="data-[state=active]:bg-rose-500/30 data-[state=active]:text-rose-100 text-slate-300 hover:text-rose-200 transition-all">
               <BookOpen className="w-4 h-4 mr-2" />
@@ -124,7 +126,7 @@ export default function CyberWatchVault() {
               <CardHeader>
                 <CardTitle className="text-purple-300 flex items-center gap-2">
                   <Target className="w-5 h-5" />
-                  CVE Intelligence Testing
+                  <ExplainThisTooltip term="CVE">CVE Intelligence Testing</ExplainThisTooltip>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -221,17 +223,17 @@ export default function CyberWatchVault() {
             />
           </TabsContent>
 
-          {/* Threat Map Tab */}
+          {/* Evidence & Timeline Tab */}
           <TabsContent value="threats" className="space-y-6">
-            <ThreatWorldMap />
+            <EvidenceTimelineNotebook />
           </TabsContent>
 
-          {/* Botnets Tab */}
+          {/* Live Threats Tab */}
           <TabsContent value="botnets" className="space-y-6">
             <LiveBotnetTracker />
           </TabsContent>
 
-          {/* Google Dorking Tab */}
+          {/* OSINT Explore Tab */}
           <TabsContent value="dorking" className="space-y-6">
             <GoogleDorkExplorer />
           </TabsContent>

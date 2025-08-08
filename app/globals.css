@@ -102,3 +102,70 @@
 .animate-twinkle {
   animation: twinkle 4s infinite ease-in-out;
 }
+
+/* Salem Cyber Vault - Feminine Glassmorphic Theme */
+@keyframes softPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes gentleGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 182, 193, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 182, 193, 0.4);
+  }
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-soft-pulse {
+  animation: softPulse 3s ease-in-out infinite;
+}
+
+.animate-gentle-glow {
+  animation: gentleGlow 4s ease-in-out infinite;
+}
+
+.animate-float-gentle {
+  animation: floatGentle 6s ease-in-out infinite;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+.glass-card-feminine {
+  background: linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, rgba(221, 160, 221, 0.1) 50%, rgba(173, 216, 230, 0.1) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 182, 193, 0.2);
+  border-radius: 24px;
+}
+
+.text-gradient-feminine {
+  background: linear-gradient(135deg, #FFB6C1 0%, #DDA0DD 50%, #ADD8E6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gradient-salem {
+  background: linear-gradient(135deg, #0F0F23 0%, #2D1B69 25%, #4A148C 50%, #6A1B9A 75%, #4A148C 100%);
+}

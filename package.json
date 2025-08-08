@@ -1,7 +1,9 @@
 {
-  "name": "my-v0-project",
-  "version": "0.1.0",
+  "name": "salem-cyber-vault",
+  "version": "1.0.0",
   "private": true,
+  "description": "Stunning, intuitive cyber forensics dashboard for digital investigation professionals and legal teams",
+  "keywords": ["cyber forensics", "digital investigation", "cybersecurity", "threat intelligence"],
   "scripts": {
     "build": "next build",
     "dev": "next dev",

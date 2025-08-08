@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon.ico" />
         <meta name="theme-color" content="#4A148C" />
         <meta name="description" content="Stunning, intuitive cyber forensics dashboard for digital investigation professionals and legal teams" />

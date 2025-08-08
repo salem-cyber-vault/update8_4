@@ -59,7 +59,7 @@ This application is **optimized for instant Vercel deployment** and serves as th
 
 ### Quick Deploy
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/salem-cyber-vault/update8_4)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/salem-cyber-vault)
 
 ### Manual Deployment
 
@@ -68,9 +68,38 @@ This application is **optimized for instant Vercel deployment** and serves as th
 3. Build the project: `npm run build`
 4. Deploy to Vercel: `vercel --prod`
 
-## 🛠️ Development
+---
 
-```bash
+### Vercel Custom Domain & Root Directory Setup
+
+To deploy this project with your custom domain:
+
+1. **Set the Root Directory:**
+   - In your Vercel dashboard, go to your project’s settings.
+   - Under **General > Root Directory**, set this to `cybersecurity-dashboard-2`.
+   - This ensures Vercel deploys from the correct folder.
+
+2. **Set up your custom domain (`salemcybervault.com`):**
+   - Add both `salemcybervault.com` and `www.salemcybervault.com` in your Vercel project's domain settings.
+   - Ensure DNS records point to Vercel (A record for root: `76.76.21.21`, CNAME for www: your Vercel domain).
+
+3. **Verify Vercel and Google TXT records:**
+   - Google site verification and Vercel TXT records must be present as shown in your DNS provider.
+
+4. **Redeploy after changes:**
+   - Trigger a new deployment to ensure changes take effect.
+
+If you see a 404 error after deploying:
+- Double-check the Root Directory in Vercel.
+- Confirm your DNS records point to Vercel.
+- Make sure your project files are inside the `cybersecurity-dashboard-2` folder.
+- Check your deployment logs for any build or routing errors.
+
+---
+
+## Development
+
+\`\`\`bash
 # Install dependencies
 npm install
 
@@ -82,64 +111,23 @@ npm run build
 
 # Start production server
 npm start
-```
+\`\`\`
 
-## 🎨 Tech Stack
+## Tech Stack
 
-- **Framework**: Next.js 15 with App Router
-- **UI Library**: React 19 with TypeScript
-- **Styling**: Tailwind CSS with custom animations
-- **Components**: Radix UI primitives
-- **Icons**: Lucide React with custom SVGs
-- **Animations**: CSS animations with Canvas-based effects
-- **Performance**: Optimized for production deployment
+- **Framework**: Next.js 14
+- **UI Library**: React 18
+- **Styling**: Tailwind CSS
+- **Components**: Radix UI
+- **Icons**: Lucide React
+- **Language**: TypeScript
 
-## 🌲 Enhanced Visual Elements
+## Halloween Special Features
 
-### **Animated Backgrounds**
-- **Forest silhouettes** with layered depth and mystical atmosphere
-- **Floating fog particles** with dynamic opacity and movement
-- **Magical lighting effects** with color transitions and pulsing
-- **Performance-optimized** canvas animations at 60fps
+- 🧙‍♀️ Witch-themed security explanations
+- 👻 Digital ghost and zombie process detection
+- 🎃 Pumpkin-powered threat analysis
+- 🕷️ Spooky scanning capabilities
+- 🦇 Dark theme with Halloween aesthetics
 
-### **Interactive Particles**
-- **Floating lights** with realistic physics and color variations
-- **Mystical sparkles** around key UI elements
-- **Gentle floating animations** that respond to user interaction
-- **Multi-layered effects** creating depth and immersion
-
-## 🎯 User Experience
-
-- **Immediately explorable** - no hidden content or blocking modals
-- **Intuitive navigation** with clear visual hierarchy
-- **Professional workflows** designed for cybersecurity experts
-- **Beginner-friendly** with guided tours and explanations
-- **Real data integration** wherever possible
-- **Responsive design** optimized for all devices
-
-## 🔧 Asset Organization
-
-```
-public/
-├── assets/
-│   ├── icons/
-│   │   ├── owl-icon.svg (painterly owl with animations)
-│   │   └── favicon.svg (optimized favicon)
-│   └── images/
-│       └── (organized image assets)
-├── favicon.ico
-└── (other static assets)
-```
-
-## 🌟 Perfect for
-
-- **Digital forensics professionals** investigating cyber incidents
-- **Legal teams** requiring comprehensive cyber intelligence
-- **Security researchers** analyzing vulnerabilities and threats
-- **SOC analysts** monitoring real-time security metrics
-- **Penetration testers** gathering intelligence and reconnaissance
-- **Students and beginners** learning cybersecurity fundamentals
-
----
-
-**Salem Cyber Vault** - *Where cybersecurity meets beautiful design* ✨
+Perfect for cybersecurity professionals who want to add some seasonal fun to their monitoring dashboards!

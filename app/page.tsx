@@ -19,6 +19,8 @@ import { ExplainThisTooltip } from "@/components/explain-this-tooltip"
 import { OnboardingTour, useOnboardingTour } from "@/components/onboarding-tour"
 import { LivingLedger } from "@/components/living-ledger"
 import { AnimatedForestBackground } from "@/components/animated-forest-background"
+import { FloatingLights } from "@/components/floating-lights"
+import { QuickNavigation } from "@/components/quick-navigation"
 import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle, Sparkles, Activity } from "lucide-react"
 
 export default function CyberWatchVault() {
@@ -61,6 +63,7 @@ export default function CyberWatchVault() {
       <AnimatedForestBackground />
       <FloatingParticles />
       <FloatingEyes />
+      <FloatingLights />
 
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-4 py-8">
@@ -68,7 +71,7 @@ export default function CyberWatchVault() {
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-4 mb-4">
             <img 
-              src="/owl-icon.svg" 
+              src="/assets/icons/owl-icon.svg" 
               alt="Salem Cyber Vault Owl" 
               className="w-16 h-16 animate-gentle-glow"
             />
@@ -76,7 +79,7 @@ export default function CyberWatchVault() {
               Salem Cyber Vault ✨
             </h1>
             <img 
-              src="/owl-icon.svg" 
+              src="/assets/icons/owl-icon.svg" 
               alt="Salem Cyber Vault Owl" 
               className="w-16 h-16 animate-gentle-glow"
               style={{ transform: 'scaleX(-1)' }}
@@ -106,6 +109,9 @@ export default function CyberWatchVault() {
             </Badge>
           </div>
         </div>
+
+        {/* Quick Navigation */}
+        <QuickNavigation onNavigate={setActiveTab} currentTab={activeTab} />
 
         {/* Main Interface */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

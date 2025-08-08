@@ -42,34 +42,34 @@ export function SearchInterface({ onSearch, loading, resultCount }: SearchInterf
   return (
     <div className="space-y-6">
       {/* Main Search */}
-      <Card className="glass-card-feminine border-pink-300/20 p-8">
+      <Card className="bg-slate-900/40 border-slate-700/50 backdrop-blur-xl p-8">
         <div className="flex items-center gap-4 mb-6">
           <div className="relative">
-            <Search className="w-8 h-8 text-pink-300 animate-gentle-glow" />
-            <div className="absolute inset-0 bg-pink-300/20 rounded-full blur-lg animate-soft-pulse"></div>
+            <Search className="w-8 h-8 text-cyan-400" />
+            <div className="absolute inset-0 bg-cyan-400/20 rounded-full blur-lg animate-pulse"></div>
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gradient-feminine">Universal Intelligence Scanner</h2>
-            <p className="text-slate-300">Discover cyber intelligence with elegance and precision</p>
+            <h2 className="text-2xl font-bold text-white">Intelligence Scanner</h2>
+            <p className="text-slate-400">Discover devices and services across the digital landscape</p>
           </div>
         </div>
 
         <div className="flex gap-4 mb-6">
           <div className="flex-1 relative group">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-pink-300 transition-colors" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-cyan-400 transition-colors" />
             <Input
-              placeholder="Enter IP, domain, email, hash, or keywords... (intelligent type detection)"
+              placeholder="Enter search query (e.g., apache, nginx, port:80, country:US)..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="pl-12 h-14 glass-card border-pink-300/30 text-white placeholder-slate-400 focus:border-pink-400/50 focus:ring-pink-400/20 text-lg"
+              className="pl-12 h-14 bg-slate-800/50 border-slate-600/50 text-white placeholder-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20 text-lg"
             />
           </div>
           <Button
             onClick={handleSearch}
             disabled={loading || !query.trim()}
             size="lg"
-            className="h-14 px-8 bg-gradient-to-r from-pink-500/80 to-purple-500/80 hover:from-pink-400/90 hover:to-purple-400/90 text-white font-medium backdrop-blur-md border border-pink-300/20"
+            className="h-14 px-8 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-medium"
           >
             {loading ? (
               <>
@@ -79,7 +79,7 @@ export function SearchInterface({ onSearch, loading, resultCount }: SearchInterf
             ) : (
               <>
                 <Zap className="w-5 h-5 mr-2" />
-                Explore
+                Search
               </>
             )}
           </Button>
@@ -87,9 +87,9 @@ export function SearchInterface({ onSearch, loading, resultCount }: SearchInterf
 
         {/* Quick Searches */}
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-slate-200 flex items-center gap-2">
-            <Eye className="w-4 h-4 text-pink-300" />
-            Quick Intelligence Searches
+          <h3 className="text-sm font-medium text-slate-300 flex items-center gap-2">
+            <Eye className="w-4 h-4" />
+            Quick Searches
           </h3>
           <div className="flex flex-wrap gap-2">
             {quickSearches.map((item) => (
@@ -101,7 +101,7 @@ export function SearchInterface({ onSearch, loading, resultCount }: SearchInterf
                   setQuery(item.query)
                   onSearch(item.query)
                 }}
-                className="glass-card-feminine border-slate-400/30 text-slate-200 hover:bg-pink-500/20 hover:text-pink-200 hover:border-pink-400/50 transition-all animate-float-gentle"
+                className="bg-slate-800/30 border-slate-600/50 text-slate-300 hover:bg-slate-700/50 hover:text-white hover:border-cyan-500/50 transition-all"
               >
                 <span className="mr-2">{item.icon}</span>
                 {item.label}
@@ -112,12 +112,12 @@ export function SearchInterface({ onSearch, loading, resultCount }: SearchInterf
 
         {/* Results Count */}
         {resultCount > 0 && (
-          <div className="mt-6 pt-6 border-t border-pink-300/20">
-            <div className="flex items-center gap-2 text-slate-200">
-              <Globe className="w-4 h-4 text-pink-300" />
+          <div className="mt-6 pt-6 border-t border-slate-700/50">
+            <div className="flex items-center gap-2 text-slate-300">
+              <Globe className="w-4 h-4 text-cyan-400" />
               <span>
                 Found{" "}
-                <Badge variant="secondary" className="glass-card-feminine bg-pink-500/20 text-pink-300 border-pink-300/30">
+                <Badge variant="secondary" className="bg-cyan-600/20 text-cyan-400">
                   {resultCount.toLocaleString()}
                 </Badge>{" "}
                 results

@@ -120,6 +120,9 @@ export function EnhancedComprehensiveIntelligenceWidget({
   const [error, setError] = useState<string | null>(null)
   const [demoMode, setDemoMode] = useState(true)
   
+  // Force update when target changes
+  const canAnalyze = target.trim().length > 0 && !loading
+  
   // Advanced features
   const [bulkMode, setBulkMode] = useState(false)
   const [targets, setTargets] = useState<AdvancedTarget[]>([])
@@ -163,7 +166,7 @@ export function EnhancedComprehensiveIntelligenceWidget({
             break
           case 'h':
             e.preventDefault()
-            setShowKeyboardShortcuts(true)
+            setShowKeyboardShortcuts(!showKeyboardShortcuts)
             break
           case 'Delete':
             e.preventDefault()
@@ -505,7 +508,11 @@ export function EnhancedComprehensiveIntelligenceWidget({
                 value={target}
                 onChange={(e) => setTarget(e.target.value)}
                 className="bg-slate-800 border-slate-600 text-white focus:border-cyan-400 transition-colors"
-                onKeyPress={(e) => e.key === 'Enter' && !e.ctrlKey && handleAnalyze()}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && !e.ctrlKey) {
+                      handleAnalyze()
+                    }
+                  }}
               />
             </div>
             
@@ -516,8 +523,8 @@ export function EnhancedComprehensiveIntelligenceWidget({
               </label>
               <Button 
                 onClick={handleAnalyze} 
-                disabled={loading || !target.trim()}
-                className="w-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 transition-all duration-300"
+                disabled={!canAnalyze}
+                className="w-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 transition-all duration-300 disabled:opacity-50"
               >
                 {loading ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
                 {loading ? 'Analyzing...' : 'Analyze'}

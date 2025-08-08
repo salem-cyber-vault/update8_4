@@ -235,11 +235,8 @@ export function useOnboardingTour() {
   const [showTour, setShowTour] = useState(false)
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem('salem-cyber-vault-onboarding-completed')
-    if (!hasCompleted) {
-      // Small delay to let the page load
-      setTimeout(() => setShowTour(true), 1000)
-    }
+    // Tour is now only shown when explicitly requested
+    // No automatic popup on first visit - content must be accessible on page
   }, [])
 
   const completeTour = () => {

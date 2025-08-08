@@ -17,10 +17,12 @@ import { FloatingEyes } from "@/components/floating-eyes"
 import { EvidenceTimelineNotebook } from "@/components/evidence-timeline-notebook"
 import { ExplainThisTooltip } from "@/components/explain-this-tooltip"
 import { OnboardingTour, useOnboardingTour } from "@/components/onboarding-tour"
-import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle, Sparkles } from "lucide-react"
+import { LivingLedger } from "@/components/living-ledger"
+import { AnimatedForestBackground } from "@/components/animated-forest-background"
+import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle, Sparkles, Activity } from "lucide-react"
 
 export default function CyberWatchVault() {
-  const [activeTab, setActiveTab] = useState("search")
+  const [activeTab, setActiveTab] = useState("ledger")
   const [testProduct, setTestProduct] = useState("")
   const [testCVEs, setTestCVEs] = useState("")
   const [searchLoading, setSearchLoading] = useState(false)
@@ -56,6 +58,7 @@ export default function CyberWatchVault() {
   return (
     <div className="min-h-screen bg-gradient-salem relative overflow-hidden">
       {/* Animated Background Elements */}
+      <AnimatedForestBackground />
       <FloatingParticles />
       <FloatingEyes />
 
@@ -63,11 +66,28 @@ export default function CyberWatchVault() {
       <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold text-gradient-feminine mb-4 animate-gentle-glow">
-            Salem Cyber Vault ✨
-          </h1>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <img 
+              src="/owl-icon.svg" 
+              alt="Salem Cyber Vault Owl" 
+              className="w-16 h-16 animate-gentle-glow"
+            />
+            <h1 className="text-6xl font-bold text-gradient-feminine animate-gentle-glow">
+              Salem Cyber Vault ✨
+            </h1>
+            <img 
+              src="/owl-icon.svg" 
+              alt="Salem Cyber Vault Owl" 
+              className="w-16 h-16 animate-gentle-glow"
+              style={{ transform: 'scaleX(-1)' }}
+            />
+          </div>
           <p className="text-xl text-slate-200 mb-6 font-light">Stunning Cyber Forensics & Digital Investigation Platform</p>
           <div className="flex justify-center gap-4 flex-wrap">
+            <Badge variant="outline" className="glass-card-feminine text-emerald-300 border-emerald-300/30 backdrop-blur-md">
+              <Activity className="w-4 h-4 mr-2" />
+              Live Intelligence Ledger
+            </Badge>
             <Badge variant="outline" className="glass-card-feminine text-pink-300 border-pink-300/30 backdrop-blur-md">
               <Shield className="w-4 h-4 mr-2" />
               <ExplainThisTooltip term="CVE">CVE Intelligence</ExplainThisTooltip>
@@ -89,7 +109,11 @@ export default function CyberWatchVault() {
 
         {/* Main Interface */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 glass-card-feminine mb-8 border-pink-300/20">
+          <TabsList className="grid w-full grid-cols-7 glass-card-feminine mb-8 border-pink-300/20">
+            <TabsTrigger value="ledger" className="data-[state=active]:bg-emerald-500/30 data-[state=active]:text-emerald-100 text-slate-300 hover:text-emerald-200 transition-all">
+              <Activity className="w-4 h-4 mr-2" />
+              Live Ledger
+            </TabsTrigger>
             <TabsTrigger value="search" className="data-[state=active]:bg-pink-500/30 data-[state=active]:text-pink-100 text-slate-300 hover:text-pink-200 transition-all">
               <Search className="w-4 h-4 mr-2" />
               Search
@@ -115,6 +139,11 @@ export default function CyberWatchVault() {
               Guide
             </TabsTrigger>
           </TabsList>
+
+          {/* Live Ledger Tab */}
+          <TabsContent value="ledger" className="space-y-6">
+            <LivingLedger />
+          </TabsContent>
 
           {/* Search Tab */}
           <TabsContent value="search" className="space-y-6">

@@ -14,10 +14,11 @@ import { GoogleDorkExplorer } from "@/components/google-dork-explorer"
 import { BeginnerGuide } from "@/components/beginner-guide"
 import { FloatingParticles } from "@/components/floating-particles"
 import { FloatingEyes } from "@/components/floating-eyes"
-import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle } from "lucide-react"
+import { ComprehensiveIntelligenceWidget } from "@/components/comprehensive-intelligence-widget"
+import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle, Settings, Brain } from "lucide-react"
 
 export default function CyberWatchVault() {
-  const [activeTab, setActiveTab] = useState("search")
+  const [activeTab, setActiveTab] = useState("intelligence")
   const [testProduct, setTestProduct] = useState("")
   const [testCVEs, setTestCVEs] = useState("")
 
@@ -55,26 +56,30 @@ export default function CyberWatchVault() {
           <div className="flex justify-center gap-4 flex-wrap">
             <Badge variant="outline" className="text-red-400 border-red-400">
               <Shield className="w-4 h-4 mr-2" />
-              CVE Intelligence
+              Comprehensive Intel
             </Badge>
             <Badge variant="outline" className="text-cyan-400 border-cyan-400">
               <Search className="w-4 h-4 mr-2" />
-              Shodan Integration
+              25+ Data Sources
             </Badge>
             <Badge variant="outline" className="text-purple-400 border-purple-400">
               <Globe className="w-4 h-4 mr-2" />
-              Threat Mapping
+              Real-time Analysis
             </Badge>
             <Badge variant="outline" className="text-orange-400 border-orange-400">
               <Bot className="w-4 h-4 mr-2" />
-              Botnet Tracking
+              Risk Scoring
             </Badge>
           </div>
         </div>
 
         {/* Main Interface */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 bg-slate-800/30 border-slate-700 mb-8">
+          <TabsList className="grid w-full grid-cols-7 bg-slate-800/30 border-slate-700 mb-8">
+            <TabsTrigger value="intelligence" className="data-[state=active]:bg-purple-600">
+              <Brain className="w-4 h-4 mr-2" />
+              Intel
+            </TabsTrigger>
             <TabsTrigger value="search" className="data-[state=active]:bg-cyan-600">
               <Search className="w-4 h-4 mr-2" />
               Search
@@ -100,6 +105,11 @@ export default function CyberWatchVault() {
               Guide
             </TabsTrigger>
           </TabsList>
+
+          {/* Comprehensive Intelligence Tab */}
+          <TabsContent value="intelligence" className="space-y-6">
+            <ComprehensiveIntelligenceWidget />
+          </TabsContent>
 
           {/* Search Tab */}
           <TabsContent value="search" className="space-y-6">

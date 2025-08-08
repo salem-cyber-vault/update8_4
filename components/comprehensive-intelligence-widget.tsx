@@ -44,6 +44,7 @@ import {
   analyzeHash,
   analyzeURL
 } from '@/lib/comprehensive-intelligence'
+import { DemoIntelligenceResults } from '@/components/demo-intelligence-results'
 
 interface ComprehensiveIntelligenceWidgetProps {
   className?: string
@@ -61,43 +62,55 @@ export function ComprehensiveIntelligenceWidget({
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<ComprehensiveIntelligenceResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [demoMode, setDemoMode] = useState(true) // Enable demo mode by default
 
   const handleAnalyze = useCallback(async () => {
     if (!target.trim()) return
     
     setLoading(true)
     setError(null)
+    setResult(null)
     
     try {
-      let analysisResult: ComprehensiveIntelligenceResult
-      
-      switch (targetType) {
-        case 'ip':
-          analysisResult = await analyzeIP(target.trim())
-          break
-        case 'domain':
-          analysisResult = await analyzeDomain(target.trim())
-          break
-        case 'email':
-          analysisResult = await analyzeEmail(target.trim())
-          break
-        case 'hash':
-          analysisResult = await analyzeHash(target.trim())
-          break
-        case 'url':
-          analysisResult = await analyzeURL(target.trim())
-          break
-        default:
-          throw new Error('Invalid target type')
+      if (demoMode) {
+        // Simulate loading time
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        
+        // Set a flag to show demo results
+        setResult({ demoMode: true, target: target.trim(), type: targetType } as any)
+      } else {
+        let analysisResult: ComprehensiveIntelligenceResult
+        
+        switch (targetType) {
+          case 'ip':
+            analysisResult = await analyzeIP(target.trim())
+            break
+          case 'domain':
+            analysisResult = await analyzeDomain(target.trim())
+            break
+          case 'email':
+            analysisResult = await analyzeEmail(target.trim())
+            break
+          case 'hash':
+            analysisResult = await analyzeHash(target.trim())
+            break
+          case 'url':
+            analysisResult = await analyzeURL(target.trim())
+            break
+          default:
+            throw new Error('Invalid target type')
+        }
+        
+        setResult(analysisResult)
       }
-      
-      setResult(analysisResult)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Analysis failed')
+      // Show demo results on error
+      setResult({ demoMode: true, target: target.trim(), type: targetType } as any)
     } finally {
       setLoading(false)
     }
-  }, [target, targetType])
+  }, [target, targetType, demoMode])
 
   const getRiskBadgeVariant = (score: number) => {
     if (score >= 70) return 'destructive'
@@ -225,6 +238,19 @@ export function ComprehensiveIntelligenceWidget({
             </div>
           </div>
 
+          {/* Demo Mode Toggle */}
+          <div className="mb-4">
+            <label className="flex items-center gap-2 text-sm text-slate-300">
+              <input
+                type="checkbox"
+                checked={demoMode}
+                onChange={(e) => setDemoMode(e.target.checked)}
+                className="rounded"
+              />
+              Demo Mode (Show sample results with realistic data)
+            </label>
+          </div>
+
           {/* Quick Targets */}
           <div className="space-y-2">
             <label className="text-sm text-slate-300">Quick Targets:</label>
@@ -261,8 +287,15 @@ export function ComprehensiveIntelligenceWidget({
       {/* Results */}
       {result && (
         <div className="space-y-6">
-          {/* Summary Card */}
-          <Card className="bg-slate-900/40 border-slate-700">
+          {(result as any).demoMode ? (
+            <DemoIntelligenceResults 
+              target={(result as any).target} 
+              targetType={(result as any).type} 
+            />
+          ) : (
+            <div className="space-y-6">
+              {/* Summary Card */}
+              <Card className="bg-slate-900/40 border-slate-700">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
@@ -582,6 +615,8 @@ export function ComprehensiveIntelligenceWidget({
               </Tabs>
             </CardContent>
           </Card>
+            </div>
+          )}
         </div>
       )}
     </div>

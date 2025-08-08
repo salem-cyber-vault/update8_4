@@ -15,12 +15,14 @@ import { BeginnerGuide } from "@/components/beginner-guide"
 import { FloatingParticles } from "@/components/floating-particles"
 import { FloatingEyes } from "@/components/floating-eyes"
 import { ComprehensiveIntelligenceWidget } from "@/components/comprehensive-intelligence-widget"
+import { SettingsPanel } from "@/components/settings-panel"
 import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle, Settings, Brain } from "lucide-react"
 
 export default function CyberWatchVault() {
   const [activeTab, setActiveTab] = useState("intelligence")
   const [testProduct, setTestProduct] = useState("")
   const [testCVEs, setTestCVEs] = useState("")
+  const [showSettings, setShowSettings] = useState(false)
 
   const handleTestCVEIntelligence = () => {
     if (testProduct.trim()) {
@@ -49,6 +51,17 @@ export default function CyberWatchVault() {
       <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
+          <div className="flex justify-end mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowSettings(!showSettings)}
+              className="border-slate-600 text-slate-300 hover:bg-slate-700"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Settings
+            </Button>
+          </div>
           <h1 className="text-6xl font-bold bg-gradient-to-r from-red-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent mb-4">
             Salem Cyber vault 🦇
           </h1>
@@ -108,7 +121,11 @@ export default function CyberWatchVault() {
 
           {/* Comprehensive Intelligence Tab */}
           <TabsContent value="intelligence" className="space-y-6">
-            <ComprehensiveIntelligenceWidget />
+            {showSettings ? (
+              <SettingsPanel onClose={() => setShowSettings(false)} />
+            ) : (
+              <ComprehensiveIntelligenceWidget />
+            )}
           </TabsContent>
 
           {/* Search Tab */}

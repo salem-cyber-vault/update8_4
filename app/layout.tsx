@@ -1,15 +1,19 @@
 import type React from "react"
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import type { Metadata, Viewport } from "next"
 import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
-
 export const metadata: Metadata = {
-  title: "Cyber Watch Vault - Internet Intelligence Platform",
+  title: "Salem Cyber Vault - Cyber Forensics & Digital Investigation Platform",
   description:
-    "Advanced cybersecurity intelligence platform for discovering and analyzing internet-connected devices and services.",
-    generator: 'v0.dev'
+    "Stunning, intuitive cyber forensics dashboard for digital investigation professionals and legal teams. Explore cyber data with AI-powered insights and beautiful visualizations.",
+  generator: 'Salem Cyber Vault',
+  keywords: ['cyber forensics', 'digital investigation', 'cybersecurity', 'Shodan', 'threat intelligence', 'evidence timeline'],
+  authors: [{ name: 'Salem Cyber Vault' }],
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({
@@ -19,7 +23,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className={inter.className}>{children}</body>
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+      </head>
+      <body className="font-sans antialiased">{children}</body>
     </html>
   )
 }

@@ -12,9 +12,10 @@ import { ThreatWorldMap } from "@/components/threat-world-map"
 import { LiveBotnetTracker } from "@/components/live-botnet-tracker"
 import { GoogleDorkExplorer } from "@/components/google-dork-explorer"
 import { BeginnerGuide } from "@/components/beginner-guide"
+import { DomainIntelligenceDashboard } from "@/components/domain-intelligence-dashboard"
 import { FloatingParticles } from "@/components/floating-particles"
 import { FloatingEyes } from "@/components/floating-eyes"
-import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle } from "lucide-react"
+import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle, Database } from "lucide-react"
 
 export default function CyberWatchVault() {
   const [activeTab, setActiveTab] = useState("search")
@@ -61,6 +62,10 @@ export default function CyberWatchVault() {
               <Search className="w-4 h-4 mr-2" />
               Shodan Integration
             </Badge>
+            <Badge variant="outline" className="text-indigo-400 border-indigo-400">
+              <Database className="w-4 h-4 mr-2" />
+              Domain Intelligence
+            </Badge>
             <Badge variant="outline" className="text-purple-400 border-purple-400">
               <Globe className="w-4 h-4 mr-2" />
               Threat Mapping
@@ -74,7 +79,7 @@ export default function CyberWatchVault() {
 
         {/* Main Interface */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 bg-slate-800/30 border-slate-700 mb-8">
+          <TabsList className="grid w-full grid-cols-7 bg-slate-800/30 border-slate-700 mb-8">
             <TabsTrigger value="search" className="data-[state=active]:bg-cyan-600">
               <Search className="w-4 h-4 mr-2" />
               Search
@@ -82,6 +87,10 @@ export default function CyberWatchVault() {
             <TabsTrigger value="cve" className="data-[state=active]:bg-red-600">
               <Shield className="w-4 h-4 mr-2" />
               CVE Intel
+            </TabsTrigger>
+            <TabsTrigger value="domain" className="data-[state=active]:bg-indigo-600">
+              <Database className="w-4 h-4 mr-2" />
+              Domain Intel
             </TabsTrigger>
             <TabsTrigger value="threats" className="data-[state=active]:bg-purple-600">
               <Globe className="w-4 h-4 mr-2" />
@@ -208,6 +217,11 @@ export default function CyberWatchVault() {
                   : undefined
               }
             />
+          </TabsContent>
+
+          {/* Domain Intelligence Tab */}
+          <TabsContent value="domain" className="space-y-6">
+            <DomainIntelligenceDashboard />
           </TabsContent>
 
           {/* Threat Map Tab */}

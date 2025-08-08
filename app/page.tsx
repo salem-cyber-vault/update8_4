@@ -16,7 +16,8 @@ import { FloatingParticles } from "@/components/floating-particles"
 import { FloatingEyes } from "@/components/floating-eyes"
 import { EvidenceTimelineNotebook } from "@/components/evidence-timeline-notebook"
 import { ExplainThisTooltip } from "@/components/explain-this-tooltip"
-import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle } from "lucide-react"
+import { OnboardingTour, useOnboardingTour } from "@/components/onboarding-tour"
+import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle, Sparkles } from "lucide-react"
 
 export default function CyberWatchVault() {
   const [activeTab, setActiveTab] = useState("search")
@@ -24,6 +25,7 @@ export default function CyberWatchVault() {
   const [testCVEs, setTestCVEs] = useState("")
   const [searchLoading, setSearchLoading] = useState(false)
   const [searchResults, setSearchResults] = useState(0)
+  const { showTour, completeTour, startTour } = useOnboardingTour()
 
   const handleSearch = (query: string) => {
     setSearchLoading(true)
@@ -247,11 +249,23 @@ export default function CyberWatchVault() {
         {/* Footer */}
         <div className="mt-16 text-center text-slate-300">
           <p className="mb-2 text-gradient-feminine font-medium">✨ Salem Cyber Vault - Stunning Cyber Forensics & Digital Investigation Platform</p>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-400 mb-4">
             Empowering digital forensics professionals and legal teams with beautiful, intuitive cyber intelligence
           </p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={startTour}
+            className="glass-card-feminine border-slate-400/30 text-slate-300 hover:text-pink-200"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            Take the Tour
+          </Button>
         </div>
       </div>
+
+      {/* Onboarding Tour */}
+      {showTour && <OnboardingTour onComplete={completeTour} />}
     </div>
   )
 }

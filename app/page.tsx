@@ -20,6 +20,17 @@ export default function CyberWatchVault() {
   const [activeTab, setActiveTab] = useState("search")
   const [testProduct, setTestProduct] = useState("")
   const [testCVEs, setTestCVEs] = useState("")
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [searchResults, setSearchResults] = useState(0)
+
+  const handleSearch = (query: string) => {
+    setSearchLoading(true)
+    // Simulate search
+    setTimeout(() => {
+      setSearchResults(Math.floor(Math.random() * 10000) + 100)
+      setSearchLoading(false)
+    }, 2000)
+  }
 
   const handleTestCVEIntelligence = () => {
     if (testProduct.trim()) {
@@ -39,7 +50,7 @@ export default function CyberWatchVault() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-salem relative overflow-hidden">
       {/* Animated Background Elements */}
       <FloatingParticles />
       <FloatingEyes />
@@ -48,54 +59,54 @@ export default function CyberWatchVault() {
       <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold bg-gradient-to-r from-red-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent mb-4">
-            Salem Cyber vault 🦇
+          <h1 className="text-6xl font-bold text-gradient-feminine mb-4 animate-gentle-glow">
+            Salem Cyber Vault ✨
           </h1>
-          <p className="text-xl text-slate-300 mb-6">Comprehensive Cybersecurity Intelligence Platform</p>
+          <p className="text-xl text-slate-200 mb-6 font-light">Stunning Cyber Forensics & Digital Investigation Platform</p>
           <div className="flex justify-center gap-4 flex-wrap">
-            <Badge variant="outline" className="text-red-400 border-red-400">
+            <Badge variant="outline" className="glass-card-feminine text-pink-300 border-pink-300/30 backdrop-blur-md">
               <Shield className="w-4 h-4 mr-2" />
               CVE Intelligence
             </Badge>
-            <Badge variant="outline" className="text-cyan-400 border-cyan-400">
+            <Badge variant="outline" className="glass-card-feminine text-purple-300 border-purple-300/30 backdrop-blur-md">
               <Search className="w-4 h-4 mr-2" />
-              Shodan Integration
+              Shodan Pro Explorer
             </Badge>
-            <Badge variant="outline" className="text-purple-400 border-purple-400">
+            <Badge variant="outline" className="glass-card-feminine text-blue-300 border-blue-300/30 backdrop-blur-md">
               <Globe className="w-4 h-4 mr-2" />
-              Threat Mapping
+              Evidence Timeline
             </Badge>
-            <Badge variant="outline" className="text-orange-400 border-orange-400">
+            <Badge variant="outline" className="glass-card-feminine text-indigo-300 border-indigo-300/30 backdrop-blur-md">
               <Bot className="w-4 h-4 mr-2" />
-              Botnet Tracking
+              Case Notebook
             </Badge>
           </div>
         </div>
 
         {/* Main Interface */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 bg-slate-800/30 border-slate-700 mb-8">
-            <TabsTrigger value="search" className="data-[state=active]:bg-cyan-600">
+          <TabsList className="grid w-full grid-cols-6 glass-card-feminine mb-8 border-pink-300/20">
+            <TabsTrigger value="search" className="data-[state=active]:bg-pink-500/30 data-[state=active]:text-pink-100 text-slate-300 hover:text-pink-200 transition-all">
               <Search className="w-4 h-4 mr-2" />
               Search
             </TabsTrigger>
-            <TabsTrigger value="cve" className="data-[state=active]:bg-red-600">
+            <TabsTrigger value="cve" className="data-[state=active]:bg-purple-500/30 data-[state=active]:text-purple-100 text-slate-300 hover:text-purple-200 transition-all">
               <Shield className="w-4 h-4 mr-2" />
               CVE Intel
             </TabsTrigger>
-            <TabsTrigger value="threats" className="data-[state=active]:bg-purple-600">
+            <TabsTrigger value="threats" className="data-[state=active]:bg-blue-500/30 data-[state=active]:text-blue-100 text-slate-300 hover:text-blue-200 transition-all">
               <Globe className="w-4 h-4 mr-2" />
-              Threat Map
+              Evidence
             </TabsTrigger>
-            <TabsTrigger value="botnets" className="data-[state=active]:bg-orange-600">
+            <TabsTrigger value="botnets" className="data-[state=active]:bg-indigo-500/30 data-[state=active]:text-indigo-100 text-slate-300 hover:text-indigo-200 transition-all">
               <Bot className="w-4 h-4 mr-2" />
-              Botnets
+              Case Notes
             </TabsTrigger>
-            <TabsTrigger value="dorking" className="data-[state=active]:bg-green-600">
+            <TabsTrigger value="dorking" className="data-[state=active]:bg-teal-500/30 data-[state=active]:text-teal-100 text-slate-300 hover:text-teal-200 transition-all">
               <Eye className="w-4 h-4 mr-2" />
-              Dorking
+              Explore
             </TabsTrigger>
-            <TabsTrigger value="guide" className="data-[state=active]:bg-blue-600">
+            <TabsTrigger value="guide" className="data-[state=active]:bg-rose-500/30 data-[state=active]:text-rose-100 text-slate-300 hover:text-rose-200 transition-all">
               <BookOpen className="w-4 h-4 mr-2" />
               Guide
             </TabsTrigger>
@@ -103,15 +114,15 @@ export default function CyberWatchVault() {
 
           {/* Search Tab */}
           <TabsContent value="search" className="space-y-6">
-            <SearchInterface />
+            <SearchInterface onSearch={handleSearch} loading={searchLoading} resultCount={searchResults} />
           </TabsContent>
 
           {/* CVE Intelligence Tab */}
           <TabsContent value="cve" className="space-y-6">
             {/* Test Controls */}
-            <Card className="bg-slate-800/30 border-slate-600">
+            <Card className="glass-card-feminine border-purple-300/20">
               <CardHeader>
-                <CardTitle className="text-red-400 flex items-center gap-2">
+                <CardTitle className="text-purple-300 flex items-center gap-2">
                   <Target className="w-5 h-5" />
                   CVE Intelligence Testing
                 </CardTitle>
@@ -119,15 +130,15 @@ export default function CyberWatchVault() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm text-slate-300">Test Product Intelligence:</label>
+                    <label className="text-sm text-slate-200">Test Product Intelligence:</label>
                     <div className="flex gap-2">
                       <Input
                         placeholder="e.g., apache, nginx, windows"
                         value={testProduct}
                         onChange={(e) => setTestProduct(e.target.value)}
-                        className="bg-slate-700/30 border-slate-600 text-white"
+                        className="glass-card border-purple-300/30 text-white placeholder-slate-400"
                       />
-                      <Button onClick={handleTestCVEIntelligence} className="bg-red-600 hover:bg-red-700">
+                      <Button onClick={handleTestCVEIntelligence} className="bg-purple-500/70 hover:bg-purple-500/90 backdrop-blur-md">
                         <Zap className="w-4 h-4 mr-2" />
                         Test
                       </Button>
@@ -135,15 +146,15 @@ export default function CyberWatchVault() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm text-slate-300">Test Specific CVEs:</label>
+                    <label className="text-sm text-slate-200">Test Specific CVEs:</label>
                     <div className="flex gap-2">
                       <Input
                         placeholder="e.g., CVE-2024-1234, CVE-2023-5678"
                         value={testCVEs}
                         onChange={(e) => setTestCVEs(e.target.value)}
-                        className="bg-slate-700/30 border-slate-600 text-white"
+                        className="glass-card border-purple-300/30 text-white placeholder-slate-400"
                       />
-                      <Button onClick={handleTestSpecificCVEs} className="bg-orange-600 hover:bg-orange-700">
+                      <Button onClick={handleTestSpecificCVEs} className="bg-pink-500/70 hover:bg-pink-500/90 backdrop-blur-md">
                         <AlertTriangle className="w-4 h-4 mr-2" />
                         Test
                       </Button>
@@ -156,7 +167,7 @@ export default function CyberWatchVault() {
                     variant="outline"
                     size="sm"
                     onClick={() => setTestProduct("apache")}
-                    className="border-slate-600 text-slate-300"
+                    className="glass-card-feminine border-slate-400/30 text-slate-200 hover:text-pink-200"
                   >
                     Apache
                   </Button>
@@ -164,7 +175,7 @@ export default function CyberWatchVault() {
                     variant="outline"
                     size="sm"
                     onClick={() => setTestProduct("nginx")}
-                    className="border-slate-600 text-slate-300"
+                    className="glass-card-feminine border-slate-400/30 text-slate-200 hover:text-purple-200"
                   >
                     Nginx
                   </Button>
@@ -172,7 +183,7 @@ export default function CyberWatchVault() {
                     variant="outline"
                     size="sm"
                     onClick={() => setTestProduct("windows")}
-                    className="border-slate-600 text-slate-300"
+                    className="glass-card-feminine border-slate-400/30 text-slate-200 hover:text-blue-200"
                   >
                     Windows
                   </Button>
@@ -180,7 +191,7 @@ export default function CyberWatchVault() {
                     variant="outline"
                     size="sm"
                     onClick={() => setTestProduct("linux")}
-                    className="border-slate-600 text-slate-300"
+                    className="glass-card-feminine border-slate-400/30 text-slate-200 hover:text-indigo-200"
                   >
                     Linux
                   </Button>
@@ -188,7 +199,7 @@ export default function CyberWatchVault() {
                     variant="outline"
                     size="sm"
                     onClick={() => setTestCVEs("CVE-2024-1234,CVE-2023-5678")}
-                    className="border-slate-600 text-slate-300"
+                    className="glass-card-feminine border-slate-400/30 text-slate-200 hover:text-teal-200"
                   >
                     Sample CVEs
                   </Button>
@@ -232,10 +243,10 @@ export default function CyberWatchVault() {
         </Tabs>
 
         {/* Footer */}
-        <div className="mt-16 text-center text-slate-400">
-          <p className="mb-2">🦇 CyberWatch Vault - Comprehensive Cybersecurity Intelligence Platform</p>
-          <p className="text-sm">
-            Powered by CVEDB, Shodan, VirusTotal, AbuseIPDB, GreyNoise & Google Custom Search APIs
+        <div className="mt-16 text-center text-slate-300">
+          <p className="mb-2 text-gradient-feminine font-medium">✨ Salem Cyber Vault - Stunning Cyber Forensics & Digital Investigation Platform</p>
+          <p className="text-sm text-slate-400">
+            Empowering digital forensics professionals and legal teams with beautiful, intuitive cyber intelligence
           </p>
         </div>
       </div>

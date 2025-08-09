@@ -12,9 +12,10 @@ import { ThreatWorldMap } from "@/components/threat-world-map"
 import { LiveBotnetTracker } from "@/components/live-botnet-tracker"
 import { GoogleDorkExplorer } from "@/components/google-dork-explorer"
 import { BeginnerGuide } from "@/components/beginner-guide"
+import { IPIntelligencePanel } from "@/components/ip-intelligence-panel"
 import { FloatingParticles } from "@/components/floating-particles"
 import { FloatingEyes } from "@/components/floating-eyes"
-import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle } from "lucide-react"
+import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle, Network } from "lucide-react"
 
 export default function CyberWatchVault() {
   const [activeTab, setActiveTab] = useState("search")
@@ -65,6 +66,10 @@ export default function CyberWatchVault() {
               <Globe className="w-4 h-4 mr-2" />
               Threat Mapping
             </Badge>
+            <Badge variant="outline" className="text-green-400 border-green-400">
+              <Network className="w-4 h-4 mr-2" />
+              IP Intelligence
+            </Badge>
             <Badge variant="outline" className="text-orange-400 border-orange-400">
               <Bot className="w-4 h-4 mr-2" />
               Botnet Tracking
@@ -74,7 +79,7 @@ export default function CyberWatchVault() {
 
         {/* Main Interface */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 bg-slate-800/30 border-slate-700 mb-8">
+          <TabsList className="grid w-full grid-cols-7 bg-slate-800/30 border-slate-700 mb-8">
             <TabsTrigger value="search" className="data-[state=active]:bg-cyan-600">
               <Search className="w-4 h-4 mr-2" />
               Search
@@ -87,15 +92,19 @@ export default function CyberWatchVault() {
               <Globe className="w-4 h-4 mr-2" />
               Threat Map
             </TabsTrigger>
+            <TabsTrigger value="ipintel" className="data-[state=active]:bg-green-600">
+              <Network className="w-4 h-4 mr-2" />
+              IP Intel
+            </TabsTrigger>
             <TabsTrigger value="botnets" className="data-[state=active]:bg-orange-600">
               <Bot className="w-4 h-4 mr-2" />
               Botnets
             </TabsTrigger>
-            <TabsTrigger value="dorking" className="data-[state=active]:bg-green-600">
+            <TabsTrigger value="dorking" className="data-[state=active]:bg-blue-600">
               <Eye className="w-4 h-4 mr-2" />
               Dorking
             </TabsTrigger>
-            <TabsTrigger value="guide" className="data-[state=active]:bg-blue-600">
+            <TabsTrigger value="guide" className="data-[state=active]:bg-indigo-600">
               <BookOpen className="w-4 h-4 mr-2" />
               Guide
             </TabsTrigger>
@@ -215,6 +224,11 @@ export default function CyberWatchVault() {
             <ThreatWorldMap />
           </TabsContent>
 
+          {/* IP Intelligence Tab */}
+          <TabsContent value="ipintel" className="space-y-6">
+            <IPIntelligencePanel />
+          </TabsContent>
+
           {/* Botnets Tab */}
           <TabsContent value="botnets" className="space-y-6">
             <LiveBotnetTracker />
@@ -235,7 +249,7 @@ export default function CyberWatchVault() {
         <div className="mt-16 text-center text-slate-400">
           <p className="mb-2">🦇 CyberWatch Vault - Comprehensive Cybersecurity Intelligence Platform</p>
           <p className="text-sm">
-            Powered by CVEDB, Shodan, VirusTotal, AbuseIPDB, GreyNoise & Google Custom Search APIs
+            Powered by CVEDB, Shodan, VirusTotal, AbuseIPDB, GreyNoise, IP-API, IPWho, IPInfo & IPGeolocation APIs
           </p>
         </div>
       </div>

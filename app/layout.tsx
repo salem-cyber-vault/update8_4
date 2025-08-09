@@ -6,7 +6,7 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Cyber Watch Vault - Internet Intelligence Platform",
+  title: "Salem Cyber Vault - Internet Intelligence Platform",
   description:
     "Advanced cybersecurity intelligence platform for discovering and analyzing internet-connected devices and services.",
     generator: 'v0.dev'

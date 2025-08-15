@@ -15,7 +15,25 @@ import { BeginnerGuide } from "@/components/beginner-guide"
 import { DomainIntelligenceDashboard } from "@/components/domain-intelligence-dashboard"
 import { FloatingParticles } from "@/components/floating-particles"
 import { FloatingEyes } from "@/components/floating-eyes"
-import { SafeIcon } from "@/lib/fallback-icons"
+import { AdvancedAnalyticsDashboard } from "@/components/advanced-analytics-dashboard"
+import { ForensicInvestigationWorkspace } from "@/components/forensic-investigation-workspace"
+import { DatabasePoweredInvestigationTracker } from "@/components/database-powered-investigation-tracker"
+import { RealTimeThreatIntelligenceHub } from "@/components/real-time-threat-intelligence-hub"
+import {
+  Shield,
+  Search,
+  Globe,
+  Bot,
+  Zap,
+  Target,
+  Eye,
+  AlertTriangle,
+  Database,
+  CheckCircle,
+  XCircle,
+  ExternalLink,
+  Activity,
+} from "lucide-react"
 
 const isSupabaseConfigured =
   typeof process.env.NEXT_PUBLIC_SUPABASE_URL === "string" &&
@@ -77,7 +95,7 @@ export default function CyberWatchVault() {
           <Card className="mb-6 bg-amber-900/20 border-amber-600">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
-                <SafeIcon name="XCircle" className="w-5 h-5 text-amber-400" />
+                <XCircle className="w-5 h-5 text-amber-400" />
                 <div className="flex-1">
                   <h3 className="text-amber-400 font-semibold">Supabase Configuration Required</h3>
                   <p className="text-amber-200 text-sm mt-1">
@@ -93,7 +111,7 @@ export default function CyberWatchVault() {
                   className="border-amber-600 text-amber-400 hover:bg-amber-600 hover:text-white bg-transparent"
                   onClick={() => window.open("https://vercel.com/dashboard", "_blank")}
                 >
-                  <span className="mr-2">↗</span>
+                  <ExternalLink className="w-4 h-4 mr-2" />
                   Project Settings
                 </Button>
               </div>
@@ -105,7 +123,7 @@ export default function CyberWatchVault() {
           <Card className="mb-6 bg-green-900/20 border-green-600">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
-                <SafeIcon name="CheckCircle" className="w-5 h-5 text-green-400" />
+                <CheckCircle className="w-5 h-5 text-green-400" />
                 <div>
                   <h3 className="text-green-400 font-semibold">Supabase Connected</h3>
                   <p className="text-green-200 text-sm">Database features are now available.</p>
@@ -123,30 +141,34 @@ export default function CyberWatchVault() {
           <p className="text-xl text-slate-300 mb-6">Comprehensive Cybersecurity Intelligence Platform</p>
           <div className="flex justify-center gap-4 flex-wrap">
             <Badge variant="outline" className="text-red-400 border-red-400">
-              <SafeIcon name="Shield" className="w-4 h-4 mr-2" />
+              <Shield className="w-4 h-4 mr-2" />
               CVE Intelligence
             </Badge>
             <Badge variant="outline" className="text-cyan-400 border-cyan-400">
-              <SafeIcon name="Search" className="w-4 h-4 mr-2" />
+              <Search className="w-4 h-4 mr-2" />
               Shodan Integration
             </Badge>
             <Badge variant="outline" className="text-indigo-400 border-indigo-400">
-              <span className="w-4 h-4 mr-2 inline-block">🗄️</span>
+              <Database className="w-4 h-4 mr-2" />
               Domain Intelligence
             </Badge>
             <Badge variant="outline" className="text-purple-400 border-purple-400">
-              <SafeIcon name="Globe" className="w-4 h-4 mr-2" />
+              <Globe className="w-4 h-4 mr-2" />
               Threat Mapping
             </Badge>
             <Badge variant="outline" className="text-orange-400 border-orange-400">
-              <span className="w-4 h-4 mr-2 inline-block">🤖</span>
+              <Bot className="w-4 h-4 mr-2" />
               Botnet Tracking
+            </Badge>
+            <Badge variant="outline" className="text-green-400 border-green-400">
+              <Activity className="w-4 h-4 mr-2" />
+              Real-time Intel
             </Badge>
             <Badge
               variant="outline"
               className={isSupabaseConfigured ? "text-green-400 border-green-400" : "text-amber-400 border-amber-400"}
             >
-              <span className="w-4 h-4 mr-2 inline-block">🗄️</span>
+              <Database className="w-4 h-4 mr-2" />
               Supabase {isSupabaseConfigured ? "Connected" : "Setup Required"}
             </Badge>
           </div>
@@ -154,40 +176,49 @@ export default function CyberWatchVault() {
 
         {/* Main Interface */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 bg-slate-800/30 border-slate-700 mb-8">
+          <TabsList className="grid w-full grid-cols-9 bg-slate-800/30 border-slate-700 mb-8">
             <TabsTrigger value="search" className="data-[state=active]:bg-cyan-600">
-              <SafeIcon name="Search" className="w-4 h-4 mr-2" />
+              <Search className="w-4 h-4 mr-2" />
               Search
             </TabsTrigger>
             <TabsTrigger value="cve" className="data-[state=active]:bg-red-600">
-              <SafeIcon name="Shield" className="w-4 h-4 mr-2" />
+              <Shield className="w-4 h-4 mr-2" />
               CVE Intel
             </TabsTrigger>
             <TabsTrigger value="domain" className="data-[state=active]:bg-indigo-600">
-              <span className="w-4 h-4 mr-2 inline-block">🗄️</span>
+              <Database className="w-4 h-4 mr-2" />
               Domain Intel
             </TabsTrigger>
             <TabsTrigger value="threats" className="data-[state=active]:bg-purple-600">
-              <SafeIcon name="Globe" className="w-4 h-4 mr-2" />
+              <Globe className="w-4 h-4 mr-2" />
               Threat Map
             </TabsTrigger>
             <TabsTrigger value="botnets" className="data-[state=active]:bg-orange-600">
-              <span className="w-4 h-4 mr-2 inline-block">🤖</span>
+              <Bot className="w-4 h-4 mr-2" />
               Botnets
             </TabsTrigger>
             <TabsTrigger value="dorking" className="data-[state=active]:bg-green-600">
-              <SafeIcon name="Eye" className="w-4 h-4 mr-2" />
+              <Eye className="w-4 h-4 mr-2" />
               Dorking
             </TabsTrigger>
-            <TabsTrigger value="guide" className="data-[state=active]:bg-blue-600">
-              <span className="w-4 h-4 mr-2 inline-block">📖</span>
-              Guide
+            <TabsTrigger value="forensics" className="data-[state=active]:bg-pink-600">
+              <Target className="w-4 h-4 mr-2" />
+              Forensics
+            </TabsTrigger>
+            <TabsTrigger value="tracking" className="data-[state=active]:bg-teal-600">
+              <Database className="w-4 h-4 mr-2" />
+              Tracking
+            </TabsTrigger>
+            <TabsTrigger value="intel-hub" className="data-[state=active]:bg-emerald-600">
+              <Activity className="w-4 h-4 mr-2" />
+              Intel Hub
             </TabsTrigger>
           </TabsList>
 
           {/* Search Tab */}
           <TabsContent value="search" className="space-y-6">
             <SearchInterface onSearch={handleSearch} loading={searchLoading} resultCount={searchResultCount} />
+            <AdvancedAnalyticsDashboard />
           </TabsContent>
 
           {/* CVE Intelligence Tab */}
@@ -196,7 +227,7 @@ export default function CyberWatchVault() {
             <Card className="bg-slate-800/30 border-slate-600">
               <CardHeader>
                 <CardTitle className="text-red-400 flex items-center gap-2">
-                  <span className="w-5 h-5 inline-block">🎯</span>
+                  <Target className="w-5 h-5" />
                   CVE Intelligence Testing
                 </CardTitle>
               </CardHeader>
@@ -212,7 +243,7 @@ export default function CyberWatchVault() {
                         className="bg-slate-700/30 border-slate-600 text-white"
                       />
                       <Button onClick={handleTestCVEIntelligence} className="bg-red-600 hover:bg-red-700">
-                        <SafeIcon name="Zap" className="w-4 h-4 mr-2" />
+                        <Zap className="w-4 h-4 mr-2" />
                         Test
                       </Button>
                     </div>
@@ -228,7 +259,7 @@ export default function CyberWatchVault() {
                         className="bg-slate-700/30 border-slate-600 text-white"
                       />
                       <Button onClick={handleTestSpecificCVEs} className="bg-orange-600 hover:bg-orange-700">
-                        <SafeIcon name="AlertTriangle" className="w-4 h-4 mr-2" />
+                        <AlertTriangle className="w-4 h-4 mr-2" />
                         Test
                       </Button>
                     </div>
@@ -312,6 +343,21 @@ export default function CyberWatchVault() {
           {/* Google Dorking Tab */}
           <TabsContent value="dorking" className="space-y-6">
             <GoogleDorkExplorer />
+          </TabsContent>
+
+          {/* Forensics Tab */}
+          <TabsContent value="forensics" className="space-y-6">
+            <ForensicInvestigationWorkspace />
+          </TabsContent>
+
+          {/* Tracking Tab */}
+          <TabsContent value="tracking" className="space-y-6">
+            <DatabasePoweredInvestigationTracker />
+          </TabsContent>
+
+          {/* Intel Hub Tab */}
+          <TabsContent value="intel-hub" className="space-y-6">
+            <RealTimeThreatIntelligenceHub />
           </TabsContent>
 
           {/* Guide Tab */}

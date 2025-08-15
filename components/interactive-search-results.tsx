@@ -8,21 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import {
-  Globe,
-  Shield,
-  AlertTriangle,
-  MapPin,
-  Server,
-  Eye,
-  ExternalLink,
-  Copy,
-  ChevronDown,
-  ChevronRight,
-  Lock,
-  Activity,
-  Flag,
-} from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { SafeIcon } from "@/lib/fallback-icons"
 
 interface SearchResult {
   id: string
@@ -42,6 +29,7 @@ interface SearchResult {
     cve: string
     severity: "low" | "medium" | "high" | "critical"
     score: number
+    description?: string
   }>
   lastSeen: string
   threatLevel: "low" | "medium" | "high" | "critical"
@@ -56,6 +44,10 @@ interface SearchResult {
   }
   banner?: string
   tags: string[]
+  shodan_data?: any
+  virustotal_data?: any
+  abuseipdb_data?: any
+  greynoise_data?: any
 }
 
 interface InteractiveSearchResultsProps {
@@ -69,58 +61,164 @@ export function InteractiveSearchResults({ query, loading, resultCount }: Intera
   const [selectedResult, setSelectedResult] = useState<SearchResult | null>(null)
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set())
   const [activeTab, setActiveTab] = useState("overview")
+  const [deepAnalysis, setDeepAnalysis] = useState<any>(null)
+  const [loadingAnalysis, setLoadingAnalysis] = useState(false)
 
-  // Mock data generation for demonstration
   useEffect(() => {
     if (query && !loading) {
-      const mockResults: SearchResult[] = Array.from({ length: Math.min(20, resultCount) }, (_, i) => ({
-        id: `result-${i}`,
-        ip: `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
-        port: [22, 80, 443, 3389, 21, 23, 25, 53, 110, 143, 993, 995][Math.floor(Math.random() * 12)],
-        protocol: ["tcp", "udp"][Math.floor(Math.random() * 2)],
-        service: ["http", "https", "ssh", "ftp", "telnet", "smtp", "dns"][Math.floor(Math.random() * 7)],
-        product: ["Apache", "Nginx", "OpenSSH", "Microsoft IIS", "Postfix", "BIND"][Math.floor(Math.random() * 6)],
-        version: `${Math.floor(Math.random() * 5) + 1}.${Math.floor(Math.random() * 10)}.${Math.floor(Math.random() * 10)}`,
-        country: ["US", "CN", "RU", "DE", "GB", "FR", "JP", "BR"][Math.floor(Math.random() * 8)],
-        city: ["New York", "Beijing", "Moscow", "Berlin", "London", "Paris", "Tokyo", "São Paulo"][
-          Math.floor(Math.random() * 8)
-        ],
-        org: ["Amazon", "Google", "Microsoft", "DigitalOcean", "Cloudflare", "OVH"][Math.floor(Math.random() * 6)],
-        isp: ["AWS", "Google Cloud", "Azure", "DigitalOcean", "Linode"][Math.floor(Math.random() * 5)],
-        asn: `AS${Math.floor(Math.random() * 90000) + 10000}`,
-        hostnames: [`host${i}.example.com`, `server${i}.domain.org`],
-        vulnerabilities:
-          Math.random() > 0.7
-            ? [
-                {
-                  cve: `CVE-2024-${Math.floor(Math.random() * 9999)
-                    .toString()
-                    .padStart(4, "0")}`,
-                  severity: ["low", "medium", "high", "critical"][Math.floor(Math.random() * 4)] as any,
-                  score: Math.random() * 10,
-                },
-              ]
+      fetchRealSearchResults(query)
+    }
+  }, [query, loading, resultCount])
+
+  const fetchRealSearchResults = async (searchQuery: string) => {
+    try {
+      console.log("[v0] Fetching real search results for:", searchQuery)
+
+      // Make real Shodan API call
+      const shodanResponse = await fetch(`/api/shodan-search?query=${encodeURIComponent(searchQuery)}`)
+      const shodanData = await shodanResponse.json()
+
+      if (shodanData.matches) {
+        const realResults: SearchResult[] = shodanData.matches.slice(0, 20).map((match: any, i: number) => ({
+          id: `shodan-${match.ip_str}-${match.port}`,
+          ip: match.ip_str,
+          port: match.port,
+          protocol: match.transport || "tcp",
+          service: match.product || match._shodan?.module || "unknown",
+          product: match.product,
+          version: match.version,
+          country: match.location?.country_name || "Unknown",
+          city: match.location?.city || "Unknown",
+          org: match.org || "Unknown",
+          isp: match.isp || "Unknown",
+          asn: match.asn || "Unknown",
+          hostnames: match.hostnames || [],
+          vulnerabilities: match.vulns
+            ? Object.keys(match.vulns).map((cve) => ({
+                cve,
+                severity: "medium" as const,
+                score: 5.0,
+                description: match.vulns[cve]?.summary,
+              }))
             : [],
-        lastSeen: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-        threatLevel: ["low", "medium", "high", "critical"][Math.floor(Math.random() * 4)] as any,
-        isHoneypot: Math.random() > 0.9,
-        ssl:
-          Math.random() > 0.5
+          lastSeen: match.timestamp || new Date().toISOString(),
+          threatLevel: match.vulns && Object.keys(match.vulns).length > 0 ? "high" : "low",
+          isHoneypot: match.tags?.includes("honeypot") || false,
+          ssl: match.ssl
             ? {
                 enabled: true,
                 cert: {
-                  issuer: "Let's Encrypt",
-                  subject: `*.example${i}.com`,
-                  expires: new Date(Date.now() + Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString(),
+                  issuer: match.ssl.cert?.issuer?.CN || "Unknown",
+                  subject: match.ssl.cert?.subject?.CN || "Unknown",
+                  expires: match.ssl.cert?.expires || "Unknown",
                 },
               }
             : { enabled: false },
-        banner: `${["Apache", "Nginx", "OpenSSH"][Math.floor(Math.random() * 3)]} Server Ready\nConnection established`,
-        tags: ["web-server", "production", "cloud"].slice(0, Math.floor(Math.random() * 3) + 1),
-      }))
-      setResults(mockResults)
+          banner: match.data,
+          tags: match.tags || [],
+          shodan_data: match,
+        }))
+
+        setResults(realResults)
+        console.log("[v0] Loaded real results:", realResults.length)
+      }
+    } catch (error) {
+      console.error("[v0] Error fetching real search results:", error)
+      // Fallback to empty results instead of mock data
+      setResults([])
     }
-  }, [query, loading, resultCount])
+  }
+
+  const investigateWithVirusTotal = async (ip: string) => {
+    setLoadingAnalysis(true)
+    try {
+      console.log("[v0] Investigating IP with VirusTotal:", ip)
+      const response = await fetch(`/api/virustotal-ip?ip=${ip}`)
+      const data = await response.json()
+      setDeepAnalysis({ type: "virustotal", data, ip })
+    } catch (error) {
+      console.error("[v0] VirusTotal investigation failed:", error)
+    }
+    setLoadingAnalysis(false)
+  }
+
+  const investigateWithAbuseIPDB = async (ip: string) => {
+    setLoadingAnalysis(true)
+    try {
+      console.log("[v0] Investigating IP with AbuseIPDB:", ip)
+      const response = await fetch(`/api/abuseipdb-check?ip=${ip}`)
+      const data = await response.json()
+      setDeepAnalysis({ type: "abuseipdb", data, ip })
+    } catch (error) {
+      console.error("[v0] AbuseIPDB investigation failed:", error)
+    }
+    setLoadingAnalysis(false)
+  }
+
+  const investigateWithGreyNoise = async (ip: string) => {
+    setLoadingAnalysis(true)
+    try {
+      console.log("[v0] Investigating IP with GreyNoise:", ip)
+      const response = await fetch(`/api/greynoise-ip?ip=${ip}`)
+      const data = await response.json()
+      setDeepAnalysis({ type: "greynoise", data, ip })
+    } catch (error) {
+      console.error("[v0] GreyNoise investigation failed:", error)
+    }
+    setLoadingAnalysis(false)
+  }
+
+  const performWhoisLookup = async (ip: string) => {
+    setLoadingAnalysis(true)
+    try {
+      console.log("[v0] Performing WHOIS lookup:", ip)
+      const response = await fetch(`/api/whois-lookup?ip=${ip}`)
+      const data = await response.json()
+      setDeepAnalysis({ type: "whois", data, ip })
+    } catch (error) {
+      console.error("[v0] WHOIS lookup failed:", error)
+    }
+    setLoadingAnalysis(false)
+  }
+
+  const exploreCVE = async (cve: string) => {
+    setLoadingAnalysis(true)
+    try {
+      console.log("[v0] Exploring CVE:", cve)
+      const response = await fetch(`/api/cve-details?cve=${cve}`)
+      const data = await response.json()
+      setDeepAnalysis({ type: "cve", data, cve })
+    } catch (error) {
+      console.error("[v0] CVE exploration failed:", error)
+    }
+    setLoadingAnalysis(false)
+  }
+
+  const exploreGeolocation = async (ip: string) => {
+    setLoadingAnalysis(true)
+    try {
+      console.log("[v0] Exploring geolocation for:", ip)
+      const response = await fetch(`/api/ip-geolocation?ip=${ip}`)
+      const data = await response.json()
+      setDeepAnalysis({ type: "geolocation", data, ip })
+    } catch (error) {
+      console.error("[v0] Geolocation exploration failed:", error)
+    }
+    setLoadingAnalysis(false)
+  }
+
+  const exploreASN = async (asn: string) => {
+    setLoadingAnalysis(true)
+    try {
+      console.log("[v0] Exploring ASN:", asn)
+      const response = await fetch(`/api/asn-analysis?asn=${asn}`)
+      const data = await response.json()
+      setDeepAnalysis({ type: "asn", data, asn })
+    } catch (error) {
+      console.error("[v0] ASN exploration failed:", error)
+    }
+    setLoadingAnalysis(false)
+  }
 
   const getThreatColor = (level: string) => {
     switch (level) {
@@ -171,15 +269,15 @@ export function InteractiveSearchResults({ query, loading, resultCount }: Intera
       <Card className="bg-slate-900/40 border-slate-700/50 backdrop-blur-xl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-cyan-400">
-            <Activity className="w-5 h-5" />
-            Search Results - {query}
+            <SafeIcon name="Activity" className="w-5 h-5" />
+            Live Search Results - {query}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div className="text-center">
               <div className="text-2xl font-bold text-white">{results.length}</div>
-              <div className="text-sm text-slate-400">Total Results</div>
+              <div className="text-sm text-slate-400">Live Results</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-red-400">
@@ -213,23 +311,26 @@ export function InteractiveSearchResults({ query, loading, resultCount }: Intera
                 <div className="flex items-center gap-3">
                   <Button variant="ghost" size="sm" onClick={() => toggleExpanded(result.id)} className="p-1 h-auto">
                     {expandedCards.has(result.id) ? (
-                      <ChevronDown className="w-4 h-4" />
+                      <SafeIcon name="ChevronDown" className="w-4 h-4" />
                     ) : (
-                      <ChevronRight className="w-4 h-4" />
+                      <SafeIcon name="ChevronRight" className="w-4 h-4" />
                     )}
                   </Button>
                   <div className="flex items-center gap-2">
-                    <Server className="w-5 h-5 text-cyan-400" />
-                    <span className="font-mono text-lg text-white">
+                    <SafeIcon name="Server" className="w-5 h-5 text-cyan-400" />
+                    <button
+                      className="font-mono text-lg text-white hover:text-cyan-400 transition-colors"
+                      onClick={() => exploreGeolocation(result.ip)}
+                    >
                       {result.ip}:{result.port}
-                    </span>
+                    </button>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => copyToClipboard(`${result.ip}:${result.port}`)}
                       className="p-1 h-auto"
                     >
-                      <Copy className="w-3 h-3" />
+                      <SafeIcon name="Copy" className="w-3 h-3" />
                     </Button>
                   </div>
                 </div>
@@ -243,20 +344,22 @@ export function InteractiveSearchResults({ query, loading, resultCount }: Intera
 
               <div className="flex items-center gap-4 text-sm text-slate-400">
                 <div className="flex items-center gap-1">
-                  <Globe className="w-4 h-4" />
+                  <SafeIcon name="Globe" className="w-4 h-4" />
                   {result.service.toUpperCase()}
                 </div>
                 <div className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
+                  <SafeIcon name="MapPin" className="w-4 h-4" />
                   {result.city}, {result.country}
                 </div>
                 <div className="flex items-center gap-1">
-                  <Flag className="w-4 h-4" />
-                  {result.org}
+                  <SafeIcon name="Flag" className="w-4 h-4" />
+                  <button className="hover:text-cyan-400 transition-colors" onClick={() => exploreASN(result.asn)}>
+                    {result.asn}
+                  </button>
                 </div>
                 {result.ssl?.enabled && (
                   <div className="flex items-center gap-1">
-                    <Lock className="w-4 h-4 text-green-400" />
+                    <SafeIcon name="Lock" className="w-4 h-4 text-green-400" />
                     SSL
                   </div>
                 )}
@@ -315,7 +418,7 @@ export function InteractiveSearchResults({ query, loading, resultCount }: Intera
                   <TabsContent value="security" className="space-y-4">
                     <div>
                       <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
-                        <Shield className="w-4 h-4" />
+                        <SafeIcon name="Shield" className="w-4 h-4" />
                         Vulnerabilities
                       </h4>
                       {result.vulnerabilities.length > 0 ? (
@@ -323,7 +426,8 @@ export function InteractiveSearchResults({ query, loading, resultCount }: Intera
                           {result.vulnerabilities.map((vuln, i) => (
                             <div key={i} className="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg">
                               <div className="flex items-center gap-3">
-                                <AlertTriangle
+                                <SafeIcon
+                                  name="AlertTriangle"
                                   className={`w-4 h-4 ${
                                     vuln.severity === "critical"
                                       ? "text-red-400"
@@ -334,7 +438,12 @@ export function InteractiveSearchResults({ query, loading, resultCount }: Intera
                                           : "text-green-400"
                                   }`}
                                 />
-                                <span className="font-mono">{vuln.cve}</span>
+                                <button
+                                  className="font-mono hover:text-cyan-400 transition-colors"
+                                  onClick={() => exploreCVE(vuln.cve)}
+                                >
+                                  {vuln.cve}
+                                </button>
                                 <Badge className={getThreatColor(vuln.severity)}>{vuln.severity.toUpperCase()}</Badge>
                               </div>
                               <div className="text-sm text-slate-400">Score: {vuln.score.toFixed(1)}</div>
@@ -349,7 +458,7 @@ export function InteractiveSearchResults({ query, loading, resultCount }: Intera
                     {result.ssl && (
                       <div>
                         <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
-                          <Lock className="w-4 h-4" />
+                          <SafeIcon name="Lock" className="w-4 h-4" />
                           SSL Certificate
                         </h4>
                         {result.ssl.enabled && result.ssl.cert ? (
@@ -428,21 +537,86 @@ export function InteractiveSearchResults({ query, loading, resultCount }: Intera
                 </Tabs>
 
                 <div className="flex gap-2 mt-4 pt-4 border-t border-slate-700/50">
-                  <Button size="sm" className="bg-cyan-600 hover:bg-cyan-700">
-                    <Eye className="w-4 h-4 mr-2" />
-                    Investigate
-                  </Button>
-                  <Button size="sm" variant="outline" className="border-slate-600 bg-transparent">
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Shodan
-                  </Button>
-                  <Button size="sm" variant="outline" className="border-slate-600 bg-transparent">
-                    <Shield className="w-4 h-4 mr-2" />
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button size="sm" className="bg-cyan-600 hover:bg-cyan-700">
+                        <SafeIcon name="Eye" className="w-4 h-4 mr-2" />
+                        Deep Analysis
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 border-slate-700">
+                      <DialogHeader>
+                        <DialogTitle className="text-cyan-400">Deep Analysis - {result.ip}</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <Button onClick={() => investigateWithVirusTotal(result.ip)} disabled={loadingAnalysis}>
+                            <SafeIcon name="Shield" className="w-4 h-4 mr-2" />
+                            VirusTotal Analysis
+                          </Button>
+                          <Button onClick={() => investigateWithAbuseIPDB(result.ip)} disabled={loadingAnalysis}>
+                            <SafeIcon name="AlertTriangle" className="w-4 h-4 mr-2" />
+                            AbuseIPDB Check
+                          </Button>
+                          <Button onClick={() => investigateWithGreyNoise(result.ip)} disabled={loadingAnalysis}>
+                            <SafeIcon name="Activity" className="w-4 h-4 mr-2" />
+                            GreyNoise Intel
+                          </Button>
+                          <Button onClick={() => performWhoisLookup(result.ip)} disabled={loadingAnalysis}>
+                            <SafeIcon name="Globe" className="w-4 h-4 mr-2" />
+                            WHOIS Lookup
+                          </Button>
+                        </div>
+
+                        {loadingAnalysis && (
+                          <div className="flex items-center justify-center p-8">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
+                            <span className="ml-4 text-slate-300">Analyzing...</span>
+                          </div>
+                        )}
+
+                        {deepAnalysis && (
+                          <div className="bg-slate-800/30 p-4 rounded-lg">
+                            <h3 className="text-lg font-semibold text-white mb-2">
+                              {deepAnalysis.type.toUpperCase()} Analysis Results
+                            </h3>
+                            <ScrollArea className="h-64">
+                              <pre className="text-xs text-slate-300 font-mono">
+                                {JSON.stringify(deepAnalysis.data, null, 2)}
+                              </pre>
+                            </ScrollArea>
+                          </div>
+                        )}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-slate-600 bg-transparent"
+                    onClick={() => investigateWithVirusTotal(result.ip)}
+                  >
+                    <SafeIcon name="Shield" className="w-4 h-4 mr-2" />
                     VirusTotal
                   </Button>
-                  <Button size="sm" variant="outline" className="border-slate-600 bg-transparent">
-                    <Globe className="w-4 h-4 mr-2" />
-                    Whois
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-slate-600 bg-transparent"
+                    onClick={() => investigateWithAbuseIPDB(result.ip)}
+                  >
+                    <SafeIcon name="AlertTriangle" className="w-4 h-4 mr-2" />
+                    AbuseIPDB
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-slate-600 bg-transparent"
+                    onClick={() => performWhoisLookup(result.ip)}
+                  >
+                    <SafeIcon name="Globe" className="w-4 h-4 mr-2" />
+                    WHOIS
                   </Button>
                 </div>
               </CardContent>

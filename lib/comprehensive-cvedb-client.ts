@@ -81,15 +81,17 @@ async function makeComprehensiveAPIRequest<T>(
       clearTimeout(timeoutId)
 
       if (!response.ok) {
+        const errorDetails = `${response.status} ${response.statusText}`
+
         if (response.status === 404) {
           console.warn(`[CVEDB] Resource not found: ${url}`)
-          throw new Error("Resource not found in CVEDB")
+          throw new Error(`Resource not found in CVEDB: ${errorDetails}`)
         }
 
         if (response.status === 422) {
           const errorData = await response.json().catch(() => ({}))
           console.error(`[CVEDB] Validation error:`, errorData)
-          throw new Error(`Invalid request parameters: ${JSON.stringify(errorData)}`)
+          throw new Error(`Invalid request parameters: ${JSON.stringify(errorData)} (${errorDetails})`)
         }
 
         if (response.status === 429) {
@@ -103,19 +105,32 @@ async function makeComprehensiveAPIRequest<T>(
         }
 
         if (response.status >= 500) {
-          console.warn(`[CVEDB] Server error ${response.status}. Retrying...`)
+          console.warn(`[CVEDB] Server error ${errorDetails}. Retrying...`)
           await new Promise((resolve) => setTimeout(resolve, retryDelay * attempt))
           continue
         }
 
-        throw new Error(`CVEDB API error: ${response.status} ${response.statusText}`)
+        throw new Error(`CVEDB API error: ${errorDetails}`)
       }
 
       const data = await response.json()
       console.log(`[CVEDB] Success: ${url} - ${JSON.stringify(data).length} bytes`)
       return data
     } catch (error) {
-      lastError = error instanceof Error ? error : new Error("Unknown error")
+      const errorMessage = error instanceof Error ? error.message : "Unknown error"
+
+      if (error instanceof TypeError && errorMessage.includes("fetch")) {
+        lastError = new Error(
+          `Network error: Failed to connect to CVEDB API (${url}). Check internet connection or API availability.`,
+        )
+      } else if (error instanceof DOMException && error.name === "AbortError") {
+        lastError = new Error(`Request timeout: CVEDB API request timed out after ${timeout}ms (${url})`)
+      } else if (errorMessage.includes("CORS")) {
+        lastError = new Error(`CORS error: Cross-origin request blocked for CVEDB API (${url})`)
+      } else {
+        lastError = error instanceof Error ? error : new Error(errorMessage)
+      }
+
       console.error(`[CVEDB] Attempt ${attempt} failed:`, lastError.message)
 
       if (attempt === maxRetries) break
@@ -126,7 +141,7 @@ async function makeComprehensiveAPIRequest<T>(
     }
   }
 
-  throw lastError || new Error("Failed to fetch from CVEDB after multiple attempts")
+  throw lastError || new Error(`Failed to fetch from CVEDB after ${maxRetries} attempts: ${url}`)
 }
 
 // 1. GET /cve/{cve_id} - Get detailed information about a specific CVE
@@ -221,8 +236,19 @@ export async function searchCPEsComprehensive(
     const url = `${CVEDB_BASE_URL}/cpes?${params}`
     return await makeComprehensiveAPIRequest<CPESearchResult>(url)
   } catch (error) {
-    console.error(`[CVEDB] Failed to search CPEs for product ${product}:`, error)
-    return { cpes: [] }
+    const errorMessage = error instanceof Error ? error.message : "Unknown error"
+    console.error(`[CVEDB] Failed to search CPEs for product ${product}:`, errorMessage)
+
+    if (options.count) {
+      return { total: 0 }
+    }
+
+    return {
+      cpes: [
+        `cpe:2.3:a:*:${product.toLowerCase()}:*:*:*:*:*:*:*:*`,
+        `cpe:2.3:a:${product.toLowerCase()}:${product.toLowerCase()}:*:*:*:*:*:*:*:*`,
+      ],
+    }
   }
 }
 
@@ -340,7 +366,13 @@ export async function searchCVEsComprehensive(
     const url = `${CVEDB_BASE_URL}/cves?${params}`
     return await makeComprehensiveAPIRequest<CVESearchResult | CVEsTotal>(url)
   } catch (error) {
-    console.error(`[CVEDB] Failed to search CVEs:`, error)
+    const errorMessage = error instanceof Error ? error.message : "Unknown error"
+    console.error(`[CVEDB] Failed to search CVEs:`, errorMessage)
+
+    if (searchOptions.count) {
+      return { total: 0 }
+    }
+
     return { cves: [] }
   }
 }

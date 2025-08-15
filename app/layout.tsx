@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -19,17 +19,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className="font-sans">
         {children}
-        <Toaster
-          theme="dark"
-          position="bottom-right"
-          toastOptions={{
-            style: {
-              background: "rgb(30 41 59)",
-              border: "1px solid rgb(71 85 105)",
-              color: "rgb(241 245 249)",
-            },
-          }}
-        />
+        <Toaster />
       </body>
     </html>
   )

@@ -21,6 +21,8 @@ export default function CyberWatchVault() {
   const [activeTab, setActiveTab] = useState("search")
   const [testProduct, setTestProduct] = useState("")
   const [testCVEs, setTestCVEs] = useState("")
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [searchResultCount, setSearchResultCount] = useState(0)
 
   const handleTestCVEIntelligence = () => {
     if (testProduct.trim()) {
@@ -36,6 +38,24 @@ export default function CyberWatchVault() {
         .map((cve) => cve.trim())
         .filter(Boolean)
       console.log(`Testing specific CVEs: ${cveList.join(", ")}`)
+    }
+  }
+
+  const handleSearch = async (query: string) => {
+    console.log("[v0] Starting search with query:", query)
+    setSearchLoading(true)
+    try {
+      // TODO: Implement actual search logic here
+      // For now, simulate a search with mock results
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const mockResultCount = Math.floor(Math.random() * 10000) + 100
+      setSearchResultCount(mockResultCount)
+      console.log("[v0] Search completed with", mockResultCount, "results")
+    } catch (error) {
+      console.error("[v0] Search error:", error)
+      setSearchResultCount(0)
+    } finally {
+      setSearchLoading(false)
     }
   }
 
@@ -112,7 +132,7 @@ export default function CyberWatchVault() {
 
           {/* Search Tab */}
           <TabsContent value="search" className="space-y-6">
-            <SearchInterface />
+            <SearchInterface onSearch={handleSearch} loading={searchLoading} resultCount={searchResultCount} />
           </TabsContent>
 
           {/* CVE Intelligence Tab */}

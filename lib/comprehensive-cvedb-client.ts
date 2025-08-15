@@ -82,18 +82,16 @@ async function makeComprehensiveAPIRequest<T>(
 
       if (!response.ok) {
         const errorDetails = `${response.status} ${response.statusText}`
-        const detailedError = `CVEDB API error: ${errorDetails} for ${url}`
-        console.error(`[CVEDB] HTTP Error:`, detailedError)
 
         if (response.status === 404) {
-          throw new Error(`Resource not found in CVEDB: ${url} (${errorDetails})`)
+          console.warn(`[CVEDB] Resource not found: ${url}`)
+          throw new Error(`Resource not found in CVEDB: ${errorDetails}`)
         }
 
         if (response.status === 422) {
           const errorData = await response.json().catch(() => ({}))
-          const validationError = `Invalid request parameters for ${url}: ${JSON.stringify(errorData)} (${errorDetails})`
-          console.error(`[CVEDB] Validation error:`, validationError)
-          throw new Error(validationError)
+          console.error(`[CVEDB] Validation error:`, errorData)
+          throw new Error(`Invalid request parameters: ${JSON.stringify(errorData)} (${errorDetails})`)
         }
 
         if (response.status === 429) {
@@ -107,51 +105,43 @@ async function makeComprehensiveAPIRequest<T>(
         }
 
         if (response.status >= 500) {
-          const serverError = `Server error ${errorDetails} for ${url}. Retrying...`
-          console.warn(`[CVEDB] ${serverError}`)
-          lastError = new Error(serverError)
+          console.warn(`[CVEDB] Server error ${errorDetails}. Retrying...`)
           await new Promise((resolve) => setTimeout(resolve, retryDelay * attempt))
           continue
         }
 
-        throw new Error(detailedError)
+        throw new Error(`CVEDB API error: ${errorDetails}`)
       }
 
       const data = await response.json()
       console.log(`[CVEDB] Success: ${url} - ${JSON.stringify(data).length} bytes`)
       return data
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error)
-      console.error(`[CVEDB] Attempt ${attempt} detailed error:`, errorMessage)
+      const errorMessage = error instanceof Error ? error.message : "Unknown error"
 
       if (error instanceof TypeError && errorMessage.includes("fetch")) {
         lastError = new Error(
-          `Network connectivity error: Failed to connect to CVEDB API at ${url}. Please check internet connection or API availability. Original error: ${errorMessage}`,
+          `Network error: Failed to connect to CVEDB API (${url}). Check internet connection or API availability.`,
         )
       } else if (error instanceof DOMException && error.name === "AbortError") {
-        lastError = new Error(`Request timeout: CVEDB API request to ${url} timed out after ${timeout}ms`)
-      } else if (errorMessage.toLowerCase().includes("cors")) {
-        lastError = new Error(
-          `CORS policy error: Cross-origin request blocked for CVEDB API at ${url}. This may indicate a browser security restriction.`,
-        )
+        lastError = new Error(`Request timeout: CVEDB API request timed out after ${timeout}ms (${url})`)
+      } else if (errorMessage.includes("CORS")) {
+        lastError = new Error(`CORS error: Cross-origin request blocked for CVEDB API (${url})`)
       } else {
-        // Preserve the original error message instead of generic "Load failed"
-        lastError = error instanceof Error ? error : new Error(`CVEDB API error: ${errorMessage}`)
+        lastError = error instanceof Error ? error : new Error(errorMessage)
       }
+
+      console.error(`[CVEDB] Attempt ${attempt} failed:`, lastError.message)
 
       if (attempt === maxRetries) break
 
       // Progressive backoff
       const waitTime = retryDelay * Math.pow(2, attempt - 1)
-      console.log(`[CVEDB] Waiting ${waitTime}ms before retry...`)
       await new Promise((resolve) => setTimeout(resolve, waitTime))
     }
   }
 
-  // Provide detailed final error message
-  const finalError = lastError || new Error(`Failed to fetch from CVEDB after ${maxRetries} attempts: ${url}`)
-  console.error(`[CVEDB] Final error after all retries:`, finalError.message)
-  throw finalError
+  throw lastError || new Error(`Failed to fetch from CVEDB after ${maxRetries} attempts: ${url}`)
 }
 
 // 1. GET /cve/{cve_id} - Get detailed information about a specific CVE

@@ -76,54 +76,85 @@ export function InteractiveSearchResults({ query, loading, resultCount }: Intera
 
       // Make real Shodan API call
       const shodanResponse = await fetch(`/api/shodan-search?query=${encodeURIComponent(searchQuery)}`)
+
+      if (!shodanResponse.ok) {
+        throw new Error(`Shodan API returned ${shodanResponse.status}: ${shodanResponse.statusText}`)
+      }
+
       const shodanData = await shodanResponse.json()
 
-      if (shodanData.matches) {
-        const realResults: SearchResult[] = shodanData.matches.slice(0, 20).map((match: any, i: number) => ({
-          id: `shodan-${match.ip_str}-${match.port}`,
-          ip: match.ip_str,
-          port: match.port,
-          protocol: match.transport || "tcp",
-          service: match.product || match._shodan?.module || "unknown",
-          product: match.product,
-          version: match.version,
-          country: match.location?.country_name || "Unknown",
-          city: match.location?.city || "Unknown",
-          org: match.org || "Unknown",
-          isp: match.isp || "Unknown",
-          asn: match.asn || "Unknown",
-          hostnames: match.hostnames || [],
-          vulnerabilities: match.vulns
-            ? Object.keys(match.vulns).map((cve) => ({
-                cve,
-                severity: "medium" as const,
-                score: 5.0,
-                description: match.vulns[cve]?.summary,
-              }))
-            : [],
-          lastSeen: match.timestamp || new Date().toISOString(),
-          threatLevel: match.vulns && Object.keys(match.vulns).length > 0 ? "high" : "low",
-          isHoneypot: match.tags?.includes("honeypot") || false,
-          ssl: match.ssl
-            ? {
-                enabled: true,
-                cert: {
-                  issuer: match.ssl.cert?.issuer?.CN || "Unknown",
-                  subject: match.ssl.cert?.subject?.CN || "Unknown",
-                  expires: match.ssl.cert?.expires || "Unknown",
-                },
-              }
-            : { enabled: false },
-          banner: match.data,
-          tags: match.tags || [],
-          shodan_data: match,
-        }))
+      if (!shodanData || typeof shodanData !== "object") {
+        throw new Error("Invalid response format from Shodan API")
+      }
+
+      if (shodanData.error) {
+        throw new Error(`Shodan API error: ${shodanData.error}`)
+      }
+
+      if (shodanData.matches && Array.isArray(shodanData.matches)) {
+        const realResults: SearchResult[] = shodanData.matches.slice(0, 20).map((match: any, i: number) => {
+          const safeGet = (obj: any, path: string, fallback: any = "Unknown") => {
+            try {
+              return path.split(".").reduce((current, key) => current?.[key], obj) || fallback
+            } catch {
+              return fallback
+            }
+          }
+
+          return {
+            id: `shodan-${safeGet(match, "ip_str", "unknown")}-${safeGet(match, "port", 0)}`,
+            ip: safeGet(match, "ip_str", "0.0.0.0"),
+            port: safeGet(match, "port", 0),
+            protocol: safeGet(match, "transport", "tcp"),
+            service: safeGet(match, "product") || safeGet(match, "_shodan.module", "unknown"),
+            product: safeGet(match, "product"),
+            version: safeGet(match, "version"),
+            country: safeGet(match, "location.country_name", "Unknown"),
+            city: safeGet(match, "location.city", "Unknown"),
+            org: safeGet(match, "org", "Unknown"),
+            isp: safeGet(match, "isp", "Unknown"),
+            asn: safeGet(match, "asn", "Unknown"),
+            hostnames: Array.isArray(match.hostnames) ? match.hostnames : [],
+            vulnerabilities:
+              match.vulns && typeof match.vulns === "object"
+                ? Object.keys(match.vulns).map((cve) => ({
+                    cve,
+                    severity: "medium" as const,
+                    score: 5.0,
+                    description: safeGet(match.vulns[cve], "summary"),
+                  }))
+                : [],
+            lastSeen: safeGet(match, "timestamp", new Date().toISOString()),
+            threatLevel: (match.vulns && Object.keys(match.vulns).length > 0 ? "high" : "low") as const,
+            isHoneypot: Array.isArray(match.tags) ? match.tags.includes("honeypot") : false,
+            ssl: match.ssl
+              ? {
+                  enabled: true,
+                  cert: {
+                    issuer: safeGet(match, "ssl.cert.issuer.CN", "Unknown"),
+                    subject: safeGet(match, "ssl.cert.subject.CN", "Unknown"),
+                    expires: safeGet(match, "ssl.cert.expires", "Unknown"),
+                  },
+                }
+              : { enabled: false },
+            banner: safeGet(match, "data", ""),
+            tags: Array.isArray(match.tags) ? match.tags : [],
+            shodan_data: match,
+          }
+        })
 
         setResults(realResults)
         console.log("[v0] Loaded real results:", realResults.length)
+      } else {
+        console.log("[v0] No matches found in Shodan response")
+        setResults([])
       }
     } catch (error) {
       console.error("[v0] Error fetching real search results:", error)
+      console.error("[v0] Error details:", {
+        message: error instanceof Error ? error.message : "Unknown error",
+        query: searchQuery,
+      })
       // Fallback to empty results instead of mock data
       setResults([])
     }

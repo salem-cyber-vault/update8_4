@@ -1,14 +1,12 @@
 // Real API integrations with working API keys
 const API_KEYS = {
-  // Using working API keys for demonstration
-  SHODAN: process.env.NEXT_PUBLIC_SHODAN_API_KEY || "C23OXE0bVMnV6K1qzGRjZzcUoNzNtUaD",
-  VIRUSTOTAL:
-    process.env.NEXT_PUBLIC_VIRUSTOTAL_API_KEY || "64b7960464b7960464b7960464b7960464b7960464b7960464b7960464b79604",
-  ABUSEIPDB:
-    process.env.NEXT_PUBLIC_ABUSEIPDB_API_KEY || "d132c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4",
-  GREYNOISE: process.env.NEXT_PUBLIC_GREYNOISE_API_KEY || "greynoise_api_key_here",
-  GOOGLE: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || "AIzaSyBVVJi2VVJi2VVJi2VVJi2VVJi2VVJi2VV",
-  GOOGLE_CSE: process.env.NEXT_PUBLIC_GOOGLE_CSE_ID || "017576662512468239146:omuauf_lfve",
+  // Using server-side environment variables for security
+  SHODAN: process.env.SHODAN_API_KEY || "C23OXE0bVMnV6K1qzGRjZzcUoNzNtUaD",
+  VIRUSTOTAL: process.env.VIRUSTOTAL_API_KEY || "64b7960464b7960464b7960464b7960464b7960464b7960464b7960464b79604",
+  ABUSEIPDB: process.env.ABUSEIPDB_API_KEY || "d132c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4c5b6c4",
+  GREYNOISE: process.env.GREYNOISE_API_KEY || "greynoise_api_key_here",
+  GOOGLE: process.env.GOOGLE_API_KEY || "AIzaSyBVVJi2VVJi2VVJi2VVJi2VVJi2VVJi2VV",
+  GOOGLE_CSE: process.env.GOOGLE_CSE_ID || "017576662512468239146:omuauf_lfve",
 }
 
 // Check if APIs are properly configured
@@ -315,35 +313,74 @@ export async function getGreyNoiseContext(ip: string) {
 // Google Custom Search for Dorking with enhanced error handling
 export async function performGoogleDork(dork: string): Promise<GoogleDorkResult[]> {
   try {
-    const response = await fetch(
-      `https://www.googleapis.com/customsearch/v1?key=${API_KEYS.GOOGLE}&cx=${API_KEYS.GOOGLE_CSE}&q=${encodeURIComponent(dork)}&num=10`,
-      {
-        headers: {
-          Accept: "application/json",
-          "User-Agent": "CyberWatchVault/1.0",
-        },
+    if (
+      !API_KEYS.GOOGLE ||
+      API_KEYS.GOOGLE.includes("YOUR_") ||
+      API_KEYS.GOOGLE === "AIzaSyBVVJi2VVJi2VVJi2VVJi2VVJi2VVJi2VV"
+    ) {
+      throw new Error("Google API key not configured. Please add GOOGLE_API_KEY to your environment variables.")
+    }
+
+    if (
+      !API_KEYS.GOOGLE_CSE ||
+      API_KEYS.GOOGLE_CSE.includes("YOUR_") ||
+      API_KEYS.GOOGLE_CSE === "017576662512468239146:omuauf_lfve"
+    ) {
+      throw new Error(
+        "Google Custom Search Engine ID not configured. Please add GOOGLE_CSE_ID to your environment variables.",
+      )
+    }
+
+    if (!dork || dork.trim().length === 0) {
+      throw new Error("Search query cannot be empty.")
+    }
+
+    const sanitizedDork = dork.trim()
+    console.log("[v0] Attempting Google dork search with query:", sanitizedDork)
+
+    const url = `https://www.googleapis.com/customsearch/v1?key=${API_KEYS.GOOGLE}&cx=${API_KEYS.GOOGLE_CSE}&q=${encodeURIComponent(sanitizedDork)}&num=10`
+    console.log("[v0] Google API URL (key masked):", url.replace(API_KEYS.GOOGLE, "***API_KEY***"))
+
+    const response = await fetch(url, {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "CyberWatchVault/1.0",
       },
-    )
+    })
+
+    console.log("[v0] Google API response status:", response.status)
 
     if (!response.ok) {
+      const errorText = await response.text().catch(() => "Unknown error")
+      console.log("[v0] Google API error response:", errorText)
+
       if (response.status === 403) {
-        const errorData = await response.json().catch(() => ({}))
+        const errorData = JSON.parse(errorText).catch(() => ({}))
         if (errorData.error?.message?.includes("quota")) {
           throw new Error("Google API daily quota exceeded. Try again tomorrow.")
         }
-        throw new Error("Google API access denied. Check your API key and CSE ID.")
+        if (errorData.error?.message?.includes("API key")) {
+          throw new Error("Invalid Google API key. Please check your GOOGLE_API_KEY configuration.")
+        }
+        throw new Error("Google API access denied. Check your API key and CSE ID configuration.")
       }
       if (response.status === 400) {
-        throw new Error("Invalid search query or parameters.")
+        throw new Error(
+          `Invalid search query or parameters. Query: "${sanitizedDork}". Please check your Google Custom Search Engine configuration.`,
+        )
       }
-      throw new Error(`Google API error: ${response.status} ${response.statusText}`)
+      throw new Error(`Google API error: ${response.status} ${response.statusText}. Response: ${errorText}`)
     }
 
     const data = await response.json()
+    console.log("[v0] Google API response data keys:", Object.keys(data))
 
-    if (!data.items) {
+    if (!data.items || data.items.length === 0) {
+      console.log("[v0] No search results found for query:", sanitizedDork)
       return []
     }
+
+    console.log("[v0] Found", data.items.length, "Google dork results")
 
     return data.items.map((item: any) => ({
       title: item.title,
@@ -354,7 +391,7 @@ export async function performGoogleDork(dork: string): Promise<GoogleDorkResult[
       category: categorizeResult(item.link, item.snippet),
     }))
   } catch (error) {
-    console.error("Google dork failed:", error)
+    console.error("[v0] Google dork failed:", error)
     throw error
   }
 }

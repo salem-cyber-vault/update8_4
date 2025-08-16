@@ -19,27 +19,7 @@ import { AdvancedAnalyticsDashboard } from "@/components/advanced-analytics-dash
 import { ForensicInvestigationWorkspace } from "@/components/forensic-investigation-workspace"
 import { DatabasePoweredInvestigationTracker } from "@/components/database-powered-investigation-tracker"
 import { RealTimeThreatIntelligenceHub } from "@/components/real-time-threat-intelligence-hub"
-import {
-  Shield,
-  Search,
-  Globe,
-  Bot,
-  Zap,
-  Target,
-  Eye,
-  AlertTriangle,
-  Database,
-  CheckCircle,
-  XCircle,
-  ExternalLink,
-  Activity,
-} from "lucide-react"
-
-const isSupabaseConfigured =
-  typeof process.env.NEXT_PUBLIC_SUPABASE_URL === "string" &&
-  process.env.NEXT_PUBLIC_SUPABASE_URL.length > 0 &&
-  typeof process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY === "string" &&
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.length > 0
+import { Shield, Search, Globe, Bot, Zap, Target, Eye, AlertTriangle, Database, Activity } from "lucide-react"
 
 export default function CyberWatchVault() {
   const [activeTab, setActiveTab] = useState("search")
@@ -91,48 +71,6 @@ export default function CyberWatchVault() {
 
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-4 py-8">
-        {!isSupabaseConfigured && (
-          <Card className="mb-6 bg-amber-900/20 border-amber-600">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <XCircle className="w-5 h-5 text-amber-400" />
-                <div className="flex-1">
-                  <h3 className="text-amber-400 font-semibold">Supabase Configuration Required</h3>
-                  <p className="text-amber-200 text-sm mt-1">
-                    Add your Supabase environment variables to enable database features.
-                  </p>
-                  <div className="mt-2 text-xs text-amber-300">
-                    Required: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-amber-600 text-amber-400 hover:bg-amber-600 hover:text-white bg-transparent"
-                  onClick={() => window.open("https://vercel.com/dashboard", "_blank")}
-                >
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Project Settings
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {isSupabaseConfigured && (
-          <Card className="mb-6 bg-green-900/20 border-green-600">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-green-400" />
-                <div>
-                  <h3 className="text-green-400 font-semibold">Supabase Connected</h3>
-                  <p className="text-green-200 text-sm">Database features are now available.</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-6xl font-bold bg-gradient-to-r from-red-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent mb-4">
@@ -163,13 +101,6 @@ export default function CyberWatchVault() {
             <Badge variant="outline" className="text-green-400 border-green-400">
               <Activity className="w-4 h-4 mr-2" />
               Real-time Intel
-            </Badge>
-            <Badge
-              variant="outline"
-              className={isSupabaseConfigured ? "text-green-400 border-green-400" : "text-amber-400 border-amber-400"}
-            >
-              <Database className="w-4 h-4 mr-2" />
-              Supabase {isSupabaseConfigured ? "Connected" : "Setup Required"}
             </Badge>
           </div>
         </div>

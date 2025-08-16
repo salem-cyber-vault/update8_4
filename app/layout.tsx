@@ -1,12 +1,13 @@
 import type React from "react"
 import type { Metadata } from "next"
+import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
 export const metadata: Metadata = {
   title: "Cyber Watch Vault - Internet Intelligence Platform",
   description:
     "Advanced cybersecurity intelligence platform for discovering and analyzing internet-connected devices and services.",
-    generator: 'v0.dev'
+  generator: "v0.dev",
 }
 
 export default function RootLayout({
@@ -16,7 +17,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className="font-sans">{children}</body>
+      <head></head>
+      <body className="font-sans">
+        {children}
+        <Toaster />
+      </body>
     </html>
   )
 }

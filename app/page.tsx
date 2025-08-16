@@ -6,19 +6,22 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { SearchInterface } from "@/components/search-interface"
 import { ComprehensiveCVEIntelligencePanel } from "@/components/comprehensive-cve-intelligence-panel"
 import { ThreatWorldMap } from "@/components/threat-world-map"
 import { LiveBotnetTracker } from "@/components/live-botnet-tracker"
 import { GoogleDorkExplorer } from "@/components/google-dork-explorer"
 import { BeginnerGuide } from "@/components/beginner-guide"
-import { IPIntelligencePanel } from "@/components/ip-intelligence-panel"
+import { DomainIntelligenceDashboard } from "@/components/domain-intelligence-dashboard"
 import { FloatingParticles } from "@/components/floating-particles"
 import { FloatingEyes } from "@/components/floating-eyes"
-import { Shield, Search, Globe, Bot, BookOpen, Zap, Target, Eye, AlertTriangle, Network } from "lucide-react"
+import { AdvancedAnalyticsDashboard } from "@/components/advanced-analytics-dashboard"
+import { ForensicInvestigationWorkspace } from "@/components/forensic-investigation-workspace"
+import { DatabasePoweredInvestigationTracker } from "@/components/database-powered-investigation-tracker"
+import { RealTimeThreatIntelligenceHub } from "@/components/real-time-threat-intelligence-hub"
+import { Shield, Globe, Bot, Zap, Target, Eye, AlertTriangle, Database, Activity } from "lucide-react"
 
 export default function CyberWatchVault() {
-  const [activeTab, setActiveTab] = useState("search")
+  const [activeTab, setActiveTab] = useState("cve")
   const [testProduct, setTestProduct] = useState("")
   const [testCVEs, setTestCVEs] = useState("")
 
@@ -58,62 +61,64 @@ export default function CyberWatchVault() {
               <Shield className="w-4 h-4 mr-2" />
               CVE Intelligence
             </Badge>
-            <Badge variant="outline" className="text-cyan-400 border-cyan-400">
-              <Search className="w-4 h-4 mr-2" />
-              Shodan Integration
+            <Badge variant="outline" className="text-indigo-400 border-indigo-400">
+              <Database className="w-4 h-4 mr-2" />
+              Domain Intelligence
             </Badge>
             <Badge variant="outline" className="text-purple-400 border-purple-400">
               <Globe className="w-4 h-4 mr-2" />
               Threat Mapping
             </Badge>
-            <Badge variant="outline" className="text-green-400 border-green-400">
-              <Network className="w-4 h-4 mr-2" />
-              IP Intelligence
-            </Badge>
             <Badge variant="outline" className="text-orange-400 border-orange-400">
               <Bot className="w-4 h-4 mr-2" />
               Botnet Tracking
+            </Badge>
+            <Badge variant="outline" className="text-green-400 border-green-400">
+              <Activity className="w-4 h-4 mr-2" />
+              Real-time Intel
             </Badge>
           </div>
         </div>
 
         {/* Main Interface */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 bg-slate-800/30 border-slate-700 mb-8">
-            <TabsTrigger value="search" className="data-[state=active]:bg-cyan-600">
-              <Search className="w-4 h-4 mr-2" />
-              Search
-            </TabsTrigger>
+          <TabsList className="grid w-full grid-cols-8 bg-slate-800/30 border-slate-700 mb-8">
             <TabsTrigger value="cve" className="data-[state=active]:bg-red-600">
               <Shield className="w-4 h-4 mr-2" />
               CVE Intel
+            </TabsTrigger>
+            <TabsTrigger value="domain" className="data-[state=active]:bg-indigo-600">
+              <Database className="w-4 h-4 mr-2" />
+              Domain Intel
             </TabsTrigger>
             <TabsTrigger value="threats" className="data-[state=active]:bg-purple-600">
               <Globe className="w-4 h-4 mr-2" />
               Threat Map
             </TabsTrigger>
-            <TabsTrigger value="ipintel" className="data-[state=active]:bg-green-600">
-              <Network className="w-4 h-4 mr-2" />
-              IP Intel
-            </TabsTrigger>
             <TabsTrigger value="botnets" className="data-[state=active]:bg-orange-600">
               <Bot className="w-4 h-4 mr-2" />
               Botnets
             </TabsTrigger>
-            <TabsTrigger value="dorking" className="data-[state=active]:bg-blue-600">
+            <TabsTrigger value="dorking" className="data-[state=active]:bg-green-600">
               <Eye className="w-4 h-4 mr-2" />
               Dorking
             </TabsTrigger>
-            <TabsTrigger value="guide" className="data-[state=active]:bg-indigo-600">
-              <BookOpen className="w-4 h-4 mr-2" />
+            <TabsTrigger value="forensics" className="data-[state=active]:bg-pink-600">
+              <Target className="w-4 h-4 mr-2" />
+              Forensics
+            </TabsTrigger>
+            <TabsTrigger value="tracking" className="data-[state=active]:bg-teal-600">
+              <Database className="w-4 h-4 mr-2" />
+              Tracking
+            </TabsTrigger>
+            <TabsTrigger value="intel-hub" className="data-[state=active]:bg-emerald-600">
+              <Activity className="w-4 h-4 mr-2" />
+              Intel Hub
+            </TabsTrigger>
+            <TabsTrigger value="guide" className="data-[state=active]:bg-yellow-600">
               Guide
             </TabsTrigger>
           </TabsList>
-
-          {/* Search Tab */}
-          <TabsContent value="search" className="space-y-6">
-            <SearchInterface />
-          </TabsContent>
 
           {/* CVE Intelligence Tab */}
           <TabsContent value="cve" className="space-y-6">
@@ -217,16 +222,17 @@ export default function CyberWatchVault() {
                   : undefined
               }
             />
+            <AdvancedAnalyticsDashboard />
+          </TabsContent>
+
+          {/* Domain Intelligence Tab */}
+          <TabsContent value="domain" className="space-y-6">
+            <DomainIntelligenceDashboard />
           </TabsContent>
 
           {/* Threat Map Tab */}
           <TabsContent value="threats" className="space-y-6">
             <ThreatWorldMap />
-          </TabsContent>
-
-          {/* IP Intelligence Tab */}
-          <TabsContent value="ipintel" className="space-y-6">
-            <IPIntelligencePanel />
           </TabsContent>
 
           {/* Botnets Tab */}
@@ -239,6 +245,21 @@ export default function CyberWatchVault() {
             <GoogleDorkExplorer />
           </TabsContent>
 
+          {/* Forensics Tab */}
+          <TabsContent value="forensics" className="space-y-6">
+            <ForensicInvestigationWorkspace />
+          </TabsContent>
+
+          {/* Tracking Tab */}
+          <TabsContent value="tracking" className="space-y-6">
+            <DatabasePoweredInvestigationTracker />
+          </TabsContent>
+
+          {/* Intel Hub Tab */}
+          <TabsContent value="intel-hub" className="space-y-6">
+            <RealTimeThreatIntelligenceHub />
+          </TabsContent>
+
           {/* Guide Tab */}
           <TabsContent value="guide" className="space-y-6">
             <BeginnerGuide />
@@ -249,7 +270,7 @@ export default function CyberWatchVault() {
         <div className="mt-16 text-center text-slate-400">
           <p className="mb-2">🦇 CyberWatch Vault - Comprehensive Cybersecurity Intelligence Platform</p>
           <p className="text-sm">
-            Powered by CVEDB, Shodan, VirusTotal, AbuseIPDB, GreyNoise, IP-API, IPWho, IPInfo & IPGeolocation APIs
+            Powered by CVEDB, Shodan, VirusTotal, AbuseIPDB, GreyNoise & Google Custom Search APIs
           </p>
         </div>
       </div>

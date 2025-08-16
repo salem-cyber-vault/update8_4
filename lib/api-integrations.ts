@@ -1,24 +1,24 @@
 // Real API integrations with comprehensive error handling
 const API_CONFIG = {
   SHODAN: {
-    key: process.env.NEXT_PUBLIC_SHODAN_API_KEY || "YOUR_SHODAN_KEY",
+    key: process.env.SHODAN_API_KEY || "YOUR_SHODAN_KEY",
     baseUrl: "https://api.shodan.io",
   },
   VIRUSTOTAL: {
-    key: process.env.NEXT_PUBLIC_VIRUSTOTAL_API_KEY || "YOUR_VT_KEY",
+    key: process.env.VIRUSTOTAL_API_KEY || "YOUR_VT_KEY",
     baseUrl: "https://www.virustotal.com/api/v3",
   },
   GOOGLE_CSE: {
-    key: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || "YOUR_GOOGLE_KEY",
-    cx: process.env.NEXT_PUBLIC_GOOGLE_CSE_ID || "YOUR_CSE_ID",
+    key: process.env.GOOGLE_API_KEY || "YOUR_GOOGLE_KEY",
+    cx: process.env.GOOGLE_CSE_ID || "YOUR_CSE_ID",
     baseUrl: "https://www.googleapis.com/customsearch/v1",
   },
   ABUSEIPDB: {
-    key: process.env.NEXT_PUBLIC_ABUSEIPDB_KEY || "YOUR_ABUSE_KEY",
+    key: process.env.ABUSEIPDB_API_KEY || "YOUR_ABUSE_KEY",
     baseUrl: "https://api.abuseipdb.com/api/v2",
   },
   GREYNOISE: {
-    key: process.env.NEXT_PUBLIC_GREYNOISE_KEY || "YOUR_GREYNOISE_KEY",
+    key: process.env.GREYNOISE_API_KEY || "YOUR_GREYNOISE_KEY",
     baseUrl: "https://api.greynoise.io/v3",
   },
 }

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Search, Zap, Globe, Eye } from "lucide-react"
+import { InteractiveSearchResults } from "@/components/interactive-search-results"
 
 interface SearchInterfaceProps {
   onSearch: (query: string) => void
@@ -17,9 +18,11 @@ interface SearchInterfaceProps {
 export function SearchInterface({ onSearch, loading, resultCount }: SearchInterfaceProps) {
   const [query, setQuery] = useState("")
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
+  const [currentQuery, setCurrentQuery] = useState("")
 
   const handleSearch = useCallback(() => {
     if (query.trim()) {
+      setCurrentQuery(query.trim())
       onSearch(query.trim())
     }
   }, [query, onSearch])
@@ -126,6 +129,9 @@ export function SearchInterface({ onSearch, loading, resultCount }: SearchInterf
           </div>
         )}
       </Card>
+
+      {/* Interactive Search Results */}
+      {currentQuery && <InteractiveSearchResults query={currentQuery} loading={loading} resultCount={resultCount} />}
     </div>
   )
 }

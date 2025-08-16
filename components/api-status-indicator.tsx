@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { CheckCircle, XCircle, AlertCircle, RefreshCw, Wifi, WifiOff } from "lucide-react"
-import { checkAPIHealth } from "@/lib/api-client"
 
 export function APIStatusIndicator() {
   const [apiStatus, setApiStatus] = useState<Record<string, boolean>>({})
@@ -15,7 +14,8 @@ export function APIStatusIndicator() {
   const checkStatus = async () => {
     setLoading(true)
     try {
-      const status = await checkAPIHealth()
+      const response = await fetch("/api/health-check")
+      const status = await response.json()
       setApiStatus(status)
       setLastCheck(new Date())
     } catch (error) {
@@ -123,14 +123,14 @@ export function APIStatusIndicator() {
                 <div>
                   <h4 className="font-medium text-amber-400 mb-1">API Configuration Required</h4>
                   <p className="text-sm text-amber-300 mb-2">
-                    Some APIs are offline. Check your environment variables in .env.local:
+                    Some APIs are offline. Check your server-side environment variables:
                   </p>
                   <ul className="text-xs text-amber-300 space-y-1">
-                    {!apiStatus.shodan && <li>• NEXT_PUBLIC_SHODAN_API_KEY</li>}
-                    {!apiStatus.virustotal && <li>• NEXT_PUBLIC_VIRUSTOTAL_API_KEY</li>}
-                    {!apiStatus.abuseipdb && <li>• NEXT_PUBLIC_ABUSEIPDB_API_KEY</li>}
-                    {!apiStatus.greynoise && <li>• NEXT_PUBLIC_GREYNOISE_API_KEY</li>}
-                    {!apiStatus.google && <li>• NEXT_PUBLIC_GOOGLE_API_KEY & NEXT_PUBLIC_GOOGLE_CSE_ID</li>}
+                    {!apiStatus.shodan && <li>• SHODAN_API_KEY</li>}
+                    {!apiStatus.virustotal && <li>• VIRUSTOTAL_API_KEY</li>}
+                    {!apiStatus.abuseipdb && <li>• ABUSEIPDB_API_KEY</li>}
+                    {!apiStatus.greynoise && <li>• GREYNOISE_API_KEY</li>}
+                    {!apiStatus.google && <li>• GOOGLE_API_KEY & GOOGLE_CSE_ID</li>}
                   </ul>
                 </div>
               </div>

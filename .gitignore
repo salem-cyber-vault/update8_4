@@ -1,0 +1,42 @@
+# Node modules
+node_modules/
+
+# Next.js build output
+.next/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+
+# Cache
+.cache/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Misc
+.vscode/
+
+# Yarn
+.yarn/
+
+# pnpm
+.pnpm-store/
+
+# Output
+out/
+
+# Coverage
+coverage/
+
+# Others
+*.swp
+*.swo
+
+# Ignore build artifacts
+build/
+dist/

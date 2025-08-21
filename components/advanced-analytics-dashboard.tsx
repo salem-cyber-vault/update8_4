@@ -65,70 +65,24 @@ export function AdvancedAnalyticsDashboard() {
   const [serviceDistribution, setServiceDistribution] = useState<ServiceDistribution[]>([])
   const [attackVectors, setAttackVectors] = useState<AttackVector[]>([])
 
-  // Mock data generation
+  // Fetch real analytics data from Supabase
   useEffect(() => {
-    // Generate threat data by country
-    const countries = ["US", "CN", "RU", "DE", "GB", "FR", "JP", "BR", "IN", "KR"]
-    const mockThreatData: ThreatData[] = countries.map((country) => ({
-      country,
-      threats: Math.floor(Math.random() * 10000) + 1000,
-      vulnerabilities: Math.floor(Math.random() * 500) + 50,
-      severity: ["low", "medium", "high", "critical"][Math.floor(Math.random() * 4)] as any,
-      lat: Math.random() * 180 - 90,
-      lng: Math.random() * 360 - 180,
-    }))
-
-    // Generate vulnerability trends
-    const mockVulnTrends: VulnerabilityTrend[] = Array.from({ length: 30 }, (_, i) => {
-      const date = new Date()
-      date.setDate(date.getDate() - (29 - i))
-      const critical = Math.floor(Math.random() * 20) + 5
-      const high = Math.floor(Math.random() * 50) + 20
-      const medium = Math.floor(Math.random() * 100) + 50
-      const low = Math.floor(Math.random() * 200) + 100
-      return {
-        date: date.toISOString().split("T")[0],
-        critical,
-        high,
-        medium,
-        low,
-        total: critical + high + medium + low,
+    async function fetchAnalytics() {
+      try {
+        const { fetchFromTable } = await import("@/lib/supabase/database")
+        const threats = await fetchFromTable<ThreatData>("threats")
+        setThreatData(threats)
+        const vulns = await fetchFromTable<VulnerabilityTrend>("vulnerability_trends")
+        setVulnerabilityTrends(vulns)
+        const services = await fetchFromTable<ServiceDistribution>("service_distribution")
+        setServiceDistribution(services)
+        const vectors = await fetchFromTable<AttackVector>("attack_vectors")
+        setAttackVectors(vectors)
+      } catch (error) {
+        console.error("Failed to fetch analytics data:", error)
       }
-    })
-
-    // Generate service distribution
-    const services = [
-      { service: "HTTP/HTTPS", color: "#3b82f6" },
-      { service: "SSH", color: "#ef4444" },
-      { service: "FTP", color: "#f59e0b" },
-      { service: "Telnet", color: "#8b5cf6" },
-      { service: "SMTP", color: "#10b981" },
-      { service: "DNS", color: "#f97316" },
-      { service: "Database", color: "#ec4899" },
-      { service: "Other", color: "#6b7280" },
-    ]
-    const mockServiceDist: ServiceDistribution[] = services.map((s) => {
-      const count = Math.floor(Math.random() * 5000) + 500
-      return {
-        ...s,
-        count,
-        percentage: Math.random() * 30 + 5,
-      }
-    })
-
-    // Generate attack vectors
-    const vectors = ["Brute Force", "SQL Injection", "XSS", "CSRF", "RCE", "DoS", "Malware", "Phishing"]
-    const mockAttackVectors: AttackVector[] = vectors.map((vector) => ({
-      vector,
-      incidents: Math.floor(Math.random() * 1000) + 100,
-      trend: (Math.random() - 0.5) * 50,
-      severity: Math.random() * 10,
-    }))
-
-    setThreatData(mockThreatData)
-    setVulnerabilityTrends(mockVulnTrends)
-    setServiceDistribution(mockServiceDist)
-    setAttackVectors(mockAttackVectors)
+    }
+    fetchAnalytics()
   }, [timeRange])
 
   const totalThreats = threatData.reduce((sum, item) => sum + item.threats, 0)

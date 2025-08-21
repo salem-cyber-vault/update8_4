@@ -15,14 +15,14 @@ interface Particle {
 export function FloatingParticles() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const particlesRef = useRef<Particle[]>([])
-  const animationRef = useRef<number>()
+  const animationRef = useRef<number | null>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
+  if (!canvas) { return }
 
     const ctx = canvas.getContext("2d")
-    if (!ctx) return
+  if (!ctx) { return }
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth
@@ -53,10 +53,10 @@ export function FloatingParticles() {
         particle.y += particle.vy
 
         // Wrap around edges
-        if (particle.x < 0) particle.x = canvas.width
-        if (particle.x > canvas.width) particle.x = 0
-        if (particle.y < 0) particle.y = canvas.height
-        if (particle.y > canvas.height) particle.y = 0
+  if (particle.x < 0) { particle.x = canvas.width }
+  if (particle.x > canvas.width) { particle.x = 0 }
+  if (particle.y < 0) { particle.y = canvas.height }
+  if (particle.y > canvas.height) { particle.y = 0 }
 
         // Pulsing opacity
         particle.opacity = 0.1 + Math.sin(Date.now() * 0.001 + index) * 0.2
@@ -69,7 +69,7 @@ export function FloatingParticles() {
 
         // Draw connections to nearby particles
         particlesRef.current.forEach((otherParticle, otherIndex) => {
-          if (index >= otherIndex) return
+          if (index >= otherIndex) { return }
 
           const dx = particle.x - otherParticle.x
           const dy = particle.y - otherParticle.y

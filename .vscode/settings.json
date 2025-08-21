@@ -1,0 +1,35 @@
+{
+  "idf.pythonInstallPath": "/usr/bin/python3",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/CVS": true,
+    "**/.ruby-lsp": true,
+    "": true,
+    "**/*.meta": true,
+    "**/*.fbx": true,
+    "Cache/": true,
+    "Libraries/": true
+  },
+  "workbench.colorTheme": "SynthWave84",
+  "editor.semanticTokenColorCustomizations": {
+    "rules": {
+      "*.documentation:robotframework": {
+        "italic": true
+      },
+      "*.embedded:robotframework": {
+        "italic": true
+      },
+      "*.builtin:robotframework": {
+        "italic": true
+      },
+      "*.deprecated": {
+        "fontStyle": "strikethrough"
+      }
+    }
+  },
+  "path-intellisense.extensionOnImport": true
+}

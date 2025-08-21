@@ -1,48 +1,72 @@
-import { createClient } from "@supabase/supabase-js"
+import { supabase } from './client';
 
-// Database types
+
 export interface Investigation {
-  id: string
-  title: string
-  description?: string
-  status: "active" | "completed" | "archived"
-  priority: "low" | "medium" | "high" | "critical"
-  created_at: string
-  updated_at: string
-  created_by?: string
-  targets: string[]
-  tags: string[]
+  id: string;
+  name: string;
+  description?: string;
+  status?: string;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+  metadata?: Record<string, any>;
 }
 
 export interface Finding {
-  id: string
-  investigation_id: string
-  type: "ip" | "domain" | "cve" | "malware" | "indicator" | "note"
-  title: string
-  content: string
-  source: string
-  severity: "info" | "low" | "medium" | "high" | "critical"
-  verified: boolean
-  created_at: string
-  updated_at: string
-  created_by?: string
-  tags: string[]
-  metadata: Record<string, any>
+  id: string;
+  investigation_id: string;
+  title: string;
+  description?: string;
+  severity?: string;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+  metadata?: Record<string, any>;
 }
 
 export interface TimelineEvent {
-  id: string
-  investigation_id: string
-  title: string
-  description?: string
-  event_type: "discovery" | "analysis" | "correlation" | "action"
-  source: string
-  severity: "info" | "warning" | "critical"
-  event_timestamp: string
-  created_at: string
-  created_by?: string
-  metadata: Record<string, any>
+  id: string;
+  investigation_id: string;
+  event_type: string;
+  event_timestamp: string;
+  description?: string;
+  created_at: string;
+  created_by?: string;
+  metadata?: Record<string, any>;
 }
+
+export interface IntelligenceCache {
+  id: string;
+  target: string;
+  source: string;
+  data: Record<string, any>;
+  created_at: string;
+  expires_at: string;
+}
+
+// Utility functions for database operations
+export async function fetchFromTable<T>(table: string): Promise<T[]> {
+  if (!supabase) {
+    throw new Error('Supabase client not configured');
+  }
+  const { data, error } = await supabase.from(table).select('*');
+  if (error) {
+    throw error;
+  }
+  return (data ?? []) as T[];
+}
+
+export async function insertIntoTable<T>(table: string, values: Partial<T>): Promise<T[]> {
+  if (!supabase) {
+    throw new Error('Supabase client not configured');
+  }
+  const { data, error } = await supabase.from(table).insert(values);
+  if (error) {
+    throw error;
+  }
+  return (data ?? []) as T[];
+}
+
 
 export interface IntelligenceCache {
   id: string
@@ -53,24 +77,14 @@ export interface IntelligenceCache {
   expires_at: string
 }
 
-// Check if Supabase is configured
-export const isSupabaseConfigured =
-  typeof process.env.SUPABASE_URL === "string" &&
-  process.env.SUPABASE_URL.length > 0 &&
-  typeof process.env.SUPABASE_ANON_KEY === "string" &&
-  process.env.SUPABASE_ANON_KEY.length > 0
-
-// Create Supabase client
-export const supabase = isSupabaseConfigured
-  ? createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!)
-  : null
+// Supabase client and config are handled in client.ts
 
 // Database operations
 export class InvestigationDB {
   static async createInvestigation(
     investigation: Omit<Investigation, "id" | "created_at" | "updated_at">,
   ): Promise<Investigation | null> {
-    if (!supabase) return null
+  if (!supabase) { return null; }
 
     const { data, error } = await supabase.from("investigations").insert(investigation).select().single()
 
@@ -83,7 +97,7 @@ export class InvestigationDB {
   }
 
   static async getInvestigations(): Promise<Investigation[]> {
-    if (!supabase) return []
+  if (!supabase) { return []; }
 
     const { data, error } = await supabase.from("investigations").select("*").order("updated_at", { ascending: false })
 
@@ -96,7 +110,7 @@ export class InvestigationDB {
   }
 
   static async getInvestigation(id: string): Promise<Investigation | null> {
-    if (!supabase) return null
+  if (!supabase) { return null; }
 
     const { data, error } = await supabase.from("investigations").select("*").eq("id", id).single()
 
@@ -109,7 +123,7 @@ export class InvestigationDB {
   }
 
   static async updateInvestigation(id: string, updates: Partial<Investigation>): Promise<Investigation | null> {
-    if (!supabase) return null
+  if (!supabase) { return null; }
 
     const { data, error } = await supabase.from("investigations").update(updates).eq("id", id).select().single()
 
@@ -122,7 +136,7 @@ export class InvestigationDB {
   }
 
   static async deleteInvestigation(id: string): Promise<boolean> {
-    if (!supabase) return false
+  if (!supabase) { return false; }
 
     const { error } = await supabase.from("investigations").delete().eq("id", id)
 
@@ -135,7 +149,7 @@ export class InvestigationDB {
   }
 
   static async addFinding(finding: Omit<Finding, "id" | "created_at" | "updated_at">): Promise<Finding | null> {
-    if (!supabase) return null
+  if (!supabase) { return null; }
 
     const { data, error } = await supabase.from("findings").insert(finding).select().single()
 
@@ -148,7 +162,7 @@ export class InvestigationDB {
   }
 
   static async getFindings(investigationId: string): Promise<Finding[]> {
-    if (!supabase) return []
+  if (!supabase) { return []; }
 
     const { data, error } = await supabase
       .from("findings")
@@ -165,7 +179,7 @@ export class InvestigationDB {
   }
 
   static async updateFinding(id: string, updates: Partial<Finding>): Promise<Finding | null> {
-    if (!supabase) return null
+  if (!supabase) { return null; }
 
     const { data, error } = await supabase.from("findings").update(updates).eq("id", id).select().single()
 
@@ -178,7 +192,7 @@ export class InvestigationDB {
   }
 
   static async addTimelineEvent(event: Omit<TimelineEvent, "id" | "created_at">): Promise<TimelineEvent | null> {
-    if (!supabase) return null
+  if (!supabase) { return null; }
 
     const { data, error } = await supabase.from("timeline_events").insert(event).select().single()
 
@@ -191,7 +205,7 @@ export class InvestigationDB {
   }
 
   static async getTimelineEvents(investigationId: string): Promise<TimelineEvent[]> {
-    if (!supabase) return []
+  if (!supabase) { return []; }
 
     const { data, error } = await supabase
       .from("timeline_events")
@@ -208,7 +222,7 @@ export class InvestigationDB {
   }
 
   static async cacheIntelligence(target: string, source: string, data: Record<string, any>): Promise<void> {
-    if (!supabase) return
+  if (!supabase) { return; }
 
     const { error } = await supabase.from("intelligence_cache").upsert({
       target,
@@ -223,7 +237,7 @@ export class InvestigationDB {
   }
 
   static async getCachedIntelligence(target: string, source: string): Promise<Record<string, any> | null> {
-    if (!supabase) return null
+  if (!supabase) { return null; }
 
     const { data, error } = await supabase
       .from("intelligence_cache")
@@ -242,7 +256,7 @@ export class InvestigationDB {
 
   // Real-time subscriptions
   static subscribeToInvestigations(callback: (payload: any) => void) {
-    if (!supabase) return null
+  if (!supabase) { return null; }
 
     return supabase
       .channel("investigations")
@@ -251,7 +265,7 @@ export class InvestigationDB {
   }
 
   static subscribeToFindings(investigationId: string, callback: (payload: any) => void) {
-    if (!supabase) return null
+  if (!supabase) { return null; }
 
     return supabase
       .channel(`findings:${investigationId}`)
@@ -269,7 +283,7 @@ export class InvestigationDB {
   }
 
   static subscribeToTimelineEvents(investigationId: string, callback: (payload: any) => void) {
-    if (!supabase) return null
+  if (!supabase) { return null; }
 
     return supabase
       .channel(`timeline:${investigationId}`)

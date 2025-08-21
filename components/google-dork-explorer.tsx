@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, ExternalLink, AlertTriangle, Info, Shield, BookOpen, Zap, Globe, Clock } from "lucide-react"
-import { performGoogleDork, type GoogleDorkResult } from "@/lib/api-client"
+import { performGoogleDork, type GoogleDorkResult } from "@/lib/api-integrations"
 
 export function GoogleDorkExplorer() {
   const [query, setQuery] = useState("")
@@ -130,7 +130,7 @@ export function GoogleDorkExplorer() {
   ]
 
   const handleSearch = async (searchQuery: string = query) => {
-    if (!searchQuery.trim()) return
+  if (!searchQuery.trim()) { return }
 
     setLoading(true)
     try {

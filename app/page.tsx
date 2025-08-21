@@ -1,6 +1,5 @@
 "use client"
-
-import { useState } from "react"
+import React, { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,6 +14,9 @@ import { DomainIntelligenceDashboard } from "@/components/domain-intelligence-da
 import { FloatingParticles } from "@/components/floating-particles"
 import { FloatingEyes } from "@/components/floating-eyes"
 import { AdvancedAnalyticsDashboard } from "@/components/advanced-analytics-dashboard"
+import { PhoneIntelligencePanel } from "@/components/phone-intelligence-panel"
+import { DomainResearchPanel } from "@/components/domain-research-panel"
+import { ArchiveExplorerPanel } from "@/components/archive-explorer-panel"
 import { ForensicInvestigationWorkspace } from "@/components/forensic-investigation-workspace"
 import { DatabasePoweredInvestigationTracker } from "@/components/database-powered-investigation-tracker"
 import { RealTimeThreatIntelligenceHub } from "@/components/real-time-threat-intelligence-hub"
@@ -42,238 +44,74 @@ export default function CyberWatchVault() {
     }
   }
 
+  // Example progress value (replace with real progress logic if needed)
+  const progress = 70;
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <FloatingParticles />
-      <FloatingEyes />
-
-      {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold bg-gradient-to-r from-red-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent mb-4">
-            Salem Cyber vault 🦇
-          </h1>
-          <p className="text-xl text-slate-300 mb-6">Comprehensive Cybersecurity Intelligence Platform</p>
-          <div className="flex justify-center gap-4 flex-wrap">
-            <Badge variant="outline" className="text-red-400 border-red-400">
-              <Shield className="w-4 h-4 mr-2" />
-              CVE Intelligence
-            </Badge>
-            <Badge variant="outline" className="text-indigo-400 border-indigo-400">
-              <Database className="w-4 h-4 mr-2" />
-              Domain Intelligence
-            </Badge>
-            <Badge variant="outline" className="text-purple-400 border-purple-400">
-              <Globe className="w-4 h-4 mr-2" />
-              Threat Mapping
-            </Badge>
-            <Badge variant="outline" className="text-orange-400 border-orange-400">
-              <Bot className="w-4 h-4 mr-2" />
-              Botnet Tracking
-            </Badge>
-            <Badge variant="outline" className="text-green-400 border-green-400">
-              <Activity className="w-4 h-4 mr-2" />
-              Real-time Intel
-            </Badge>
-          </div>
-        </div>
-
-        {/* Main Interface */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-8 bg-slate-800/30 border-slate-700 mb-8">
-            <TabsTrigger value="cve" className="data-[state=active]:bg-red-600">
-              <Shield className="w-4 h-4 mr-2" />
-              CVE Intel
-            </TabsTrigger>
-            <TabsTrigger value="domain" className="data-[state=active]:bg-indigo-600">
-              <Database className="w-4 h-4 mr-2" />
-              Domain Intel
-            </TabsTrigger>
-            <TabsTrigger value="threats" className="data-[state=active]:bg-purple-600">
-              <Globe className="w-4 h-4 mr-2" />
-              Threat Map
-            </TabsTrigger>
-            <TabsTrigger value="botnets" className="data-[state=active]:bg-orange-600">
-              <Bot className="w-4 h-4 mr-2" />
-              Botnets
-            </TabsTrigger>
-            <TabsTrigger value="dorking" className="data-[state=active]:bg-green-600">
-              <Eye className="w-4 h-4 mr-2" />
-              Dorking
-            </TabsTrigger>
-            <TabsTrigger value="forensics" className="data-[state=active]:bg-pink-600">
-              <Target className="w-4 h-4 mr-2" />
-              Forensics
-            </TabsTrigger>
-            <TabsTrigger value="tracking" className="data-[state=active]:bg-teal-600">
-              <Database className="w-4 h-4 mr-2" />
-              Tracking
-            </TabsTrigger>
-            <TabsTrigger value="intel-hub" className="data-[state=active]:bg-emerald-600">
-              <Activity className="w-4 h-4 mr-2" />
-              Intel Hub
-            </TabsTrigger>
-            <TabsTrigger value="guide" className="data-[state=active]:bg-yellow-600">
-              Guide
-            </TabsTrigger>
-          </TabsList>
-
-          {/* CVE Intelligence Tab */}
-          <TabsContent value="cve" className="space-y-6">
-            {/* Test Controls */}
-            <Card className="bg-slate-800/30 border-slate-600">
-              <CardHeader>
-                <CardTitle className="text-red-400 flex items-center gap-2">
-                  <Target className="w-5 h-5" />
-                  CVE Intelligence Testing
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm text-slate-300">Test Product Intelligence:</label>
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="e.g., apache, nginx, windows"
-                        value={testProduct}
-                        onChange={(e) => setTestProduct(e.target.value)}
-                        className="bg-slate-700/30 border-slate-600 text-white"
-                      />
-                      <Button onClick={handleTestCVEIntelligence} className="bg-red-600 hover:bg-red-700">
-                        <Zap className="w-4 h-4 mr-2" />
-                        Test
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-sm text-slate-300">Test Specific CVEs:</label>
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="e.g., CVE-2024-1234, CVE-2023-5678"
-                        value={testCVEs}
-                        onChange={(e) => setTestCVEs(e.target.value)}
-                        className="bg-slate-700/30 border-slate-600 text-white"
-                      />
-                      <Button onClick={handleTestSpecificCVEs} className="bg-orange-600 hover:bg-orange-700">
-                        <AlertTriangle className="w-4 h-4 mr-2" />
-                        Test
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-2 flex-wrap">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setTestProduct("apache")}
-                    className="border-slate-600 text-slate-300"
-                  >
-                    Apache
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setTestProduct("nginx")}
-                    className="border-slate-600 text-slate-300"
-                  >
-                    Nginx
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setTestProduct("windows")}
-                    className="border-slate-600 text-slate-300"
-                  >
-                    Windows
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setTestProduct("linux")}
-                    className="border-slate-600 text-slate-300"
-                  >
-                    Linux
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setTestCVEs("CVE-2024-1234,CVE-2023-5678")}
-                    className="border-slate-600 text-slate-300"
-                  >
-                    Sample CVEs
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* CVE Intelligence Panel */}
-            <ComprehensiveCVEIntelligencePanel
-              product={testProduct || "apache"}
-              cveIds={
-                testCVEs
-                  ? testCVEs
-                      .split(",")
-                      .map((cve) => cve.trim())
-                      .filter(Boolean)
-                  : undefined
-              }
-            />
-            <AdvancedAnalyticsDashboard />
-          </TabsContent>
-
-          {/* Domain Intelligence Tab */}
-          <TabsContent value="domain" className="space-y-6">
-            <DomainIntelligenceDashboard />
-          </TabsContent>
-
-          {/* Threat Map Tab */}
-          <TabsContent value="threats" className="space-y-6">
-            <ThreatWorldMap />
-          </TabsContent>
-
-          {/* Botnets Tab */}
-          <TabsContent value="botnets" className="space-y-6">
-            <LiveBotnetTracker />
-          </TabsContent>
-
-          {/* Google Dorking Tab */}
-          <TabsContent value="dorking" className="space-y-6">
-            <GoogleDorkExplorer />
-          </TabsContent>
-
-          {/* Forensics Tab */}
-          <TabsContent value="forensics" className="space-y-6">
-            <ForensicInvestigationWorkspace />
-          </TabsContent>
-
-          {/* Tracking Tab */}
-          <TabsContent value="tracking" className="space-y-6">
-            <DatabasePoweredInvestigationTracker />
-          </TabsContent>
-
-          {/* Intel Hub Tab */}
-          <TabsContent value="intel-hub" className="space-y-6">
-            <RealTimeThreatIntelligenceHub />
-          </TabsContent>
-
-          {/* Guide Tab */}
-          <TabsContent value="guide" className="space-y-6">
-            <BeginnerGuide />
-          </TabsContent>
-        </Tabs>
-
-        {/* Footer */}
-        <div className="mt-16 text-center text-slate-400">
-          <p className="mb-2">🦇 CyberWatch Vault - Comprehensive Cybersecurity Intelligence Platform</p>
-          <p className="text-sm">
-            Powered by CVEDB, Shodan, VirusTotal, AbuseIPDB, GreyNoise & Google Custom Search APIs
-          </p>
-        </div>
+    <main className="relative min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-black via-gray-900 to-indigo-950 text-white overflow-hidden">
+      {/* Mysterious animated background */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <FloatingParticles />
+        <FloatingEyes />
+        <div className="absolute inset-0 bg-gradient-radial from-black/80 via-indigo-950/60 to-transparent" style={{mixBlendMode: 'multiply'}} />
+        <div className="absolute inset-0 bg-noise opacity-20" />
       </div>
-    </div>
+      {/* Main content */}
+      <div className="z-10 relative flex flex-col items-center justify-center py-16 px-4 w-full max-w-2xl backdrop-blur-xl bg-black/60 rounded-2xl shadow-2xl border border-indigo-900">
+        <h1 className="text-5xl md:text-7xl font-black mb-4 text-center tracking-tight text-indigo-200 drop-shadow-[0_2px_16px_rgba(80,0,120,0.7)]">Salem Cyber Vault</h1>
+        <div className="w-full mb-6">
+          <div className="w-full h-4 bg-gray-800 rounded-full overflow-hidden">
+            <div className="h-full bg-indigo-500 transition-all duration-500" style={{ width: `${progress}%` }} />
+          </div>
+          <div className="text-right text-xs text-indigo-300 mt-1">Progress: {progress}%</div>
+        </div>
+        <p className="text-lg md:text-2xl mb-8 text-center max-w-xl text-indigo-300/80 italic">Where cyber mysteries unfold. Explore real-time threat feeds, CVE intelligence, botnet tracking, and more in a vault of secrets.</p>
+        <div className="flex flex-wrap gap-4 justify-center mb-8">
+          <Button className="bg-indigo-900/80 hover:bg-indigo-700 text-indigo-200 shadow-lg" onClick={() => setActiveTab("cve")}>CVE Intelligence</Button>
+          <Button className="bg-purple-900/80 hover:bg-purple-700 text-purple-200 shadow-lg" onClick={() => setActiveTab("threats")}>Threat World Map</Button>
+          <Button className="bg-black/80 hover:bg-gray-800 text-gray-200 shadow-lg" onClick={() => setActiveTab("botnet")}>Botnet Tracker</Button>
+          <Button className="bg-gray-900/80 hover:bg-gray-700 text-gray-200 shadow-lg" onClick={() => setActiveTab("analytics")}>Analytics</Button>
+          <Button className="bg-indigo-950/80 hover:bg-indigo-800 text-indigo-300 shadow-lg" onClick={() => setActiveTab("investigations")}>Investigations</Button>
+        </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="flex gap-2 justify-center mb-4">
+            <TabsTrigger value="cve" className="bg-indigo-950/60 text-indigo-200">CVE Intelligence</TabsTrigger>
+            <TabsTrigger value="threats" className="bg-purple-950/60 text-purple-200">Threat Map</TabsTrigger>
+            <TabsTrigger value="botnet" className="bg-black/60 text-gray-200">Botnet Tracker</TabsTrigger>
+            <TabsTrigger value="analytics" className="bg-gray-900/60 text-gray-200">Analytics</TabsTrigger>
+            <TabsTrigger value="investigations" className="bg-indigo-950/60 text-indigo-300">Investigations</TabsTrigger>
+          </TabsList>
+          <TabsContent value="cve"><ComprehensiveCVEIntelligencePanel /></TabsContent>
+          <TabsContent value="threats"><ThreatWorldMap /></TabsContent>
+          <TabsContent value="botnet"><LiveBotnetTracker /></TabsContent>
+          <TabsContent value="analytics">
+            <div className="space-y-8">
+              <AdvancedAnalyticsDashboard />
+              {/* Google Dork Explorer */}
+              <div className="mt-8">
+                <h2 className="text-2xl font-bold text-orange-300 mb-2 flex items-center gap-2"><Eye className="w-6 h-6 text-orange-400" /> Google Dork Explorer</h2>
+                <GoogleDorkExplorer />
+              </div>
+              {/* Phone Intelligence Panel */}
+              <div className="mt-8">
+                <h2 className="text-2xl font-bold text-pink-300 mb-2 flex items-center gap-2"><AlertTriangle className="w-6 h-6 text-pink-400" /> Phone Intelligence</h2>
+                <PhoneIntelligencePanel />
+              </div>
+              {/* Domain Research Panel */}
+              <div className="mt-8">
+                <h2 className="text-2xl font-bold text-green-300 mb-2 flex items-center gap-2"><Globe className="w-6 h-6 text-green-400" /> Domain Research</h2>
+                <DomainResearchPanel />
+              </div>
+              {/* Archive Explorer Panel */}
+              <div className="mt-8">
+                <h2 className="text-2xl font-bold text-yellow-300 mb-2 flex items-center gap-2"><Database className="w-6 h-6 text-yellow-400" /> Archive & Cached Data Explorer</h2>
+                <ArchiveExplorerPanel />
+              </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="investigations"><ForensicInvestigationWorkspace /></TabsContent>
+        </Tabs>
+        <BeginnerGuide />
+      </div>
+    </main>
   )
 }

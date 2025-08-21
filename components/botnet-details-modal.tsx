@@ -24,9 +24,9 @@ import {
   Skull,
   Lock,
 } from "lucide-react"
-import { searchShodan, getComprehensiveThreatIntel } from "@/lib/api-client"
+import { searchShodan, getComprehensiveThreatIntel } from "@/lib/api-integrations"
 import { CVEIntelligencePanel } from "./cve-intelligence-panel"
-import type { BotnetData, ShodanHost } from "@/lib/api-client"
+import type { BotnetData, ShodanHost } from "@/lib/api-integrations"
 
 interface BotnetDetailsModalProps {
   botnet: BotnetData | null
@@ -48,7 +48,7 @@ export function BotnetDetailsModal({ botnet, open, onOpenChange }: BotnetDetails
   }, [botnet, open])
 
   const loadBotnetIntelligence = async () => {
-    if (!botnet) return
+  if (!botnet) { return }
 
     setLoading(true)
     try {
@@ -72,7 +72,7 @@ export function BotnetDetailsModal({ botnet, open, onOpenChange }: BotnetDetails
       setShodanData(uniqueHosts.slice(0, 20)) // Limit to 20 hosts
 
       // Get threat intelligence for C2 servers
-      if (botnet.c2Servers.length > 0) {
+  if (botnet.c2Servers.length > 0) {
         const threatPromises = botnet.c2Servers.slice(0, 5).map(async (ip) => {
           try {
             const intel = await getComprehensiveThreatIntel(ip)
@@ -117,15 +117,15 @@ export function BotnetDetailsModal({ botnet, open, onOpenChange }: BotnetDetails
   }
 
   const getServiceIcon = (product?: string) => {
-    if (!product) return <Server className="w-4 h-4" />
-    const p = product.toLowerCase()
-    if (p.includes("apache") || p.includes("nginx")) return <Globe className="w-4 h-4" />
-    if (p.includes("ssh")) return <Lock className="w-4 h-4" />
-    if (p.includes("mysql") || p.includes("mongodb")) return <Database className="w-4 h-4" />
-    return <Server className="w-4 h-4" />
+  if (!product) { return <Server className="w-4 h-4" /> }
+  const p = product.toLowerCase()
+  if (p.includes("apache") || p.includes("nginx")) { return <Globe className="w-4 h-4" /> }
+  if (p.includes("ssh")) { return <Lock className="w-4 h-4" /> }
+  if (p.includes("mysql") || p.includes("mongodb")) { return <Database className="w-4 h-4" /> }
+  return <Server className="w-4 h-4" />
   }
 
-  if (!botnet) return null
+  if (!botnet) { return null }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -492,7 +492,7 @@ export function BotnetDetailsModal({ botnet, open, onOpenChange }: BotnetDetails
 
                   <h4 className="text-white">How does it work?</h4>
                   <p className="text-slate-300">
-                    The botnet operates through Command & Control (C&C) servers that send instructions to infected
+                    The botnet operates through Command & Control (C&C) servers sending instructions to infected
                     devices. These instructions can include launching DDoS attacks, stealing data, mining
                     cryptocurrency, or spreading to other devices.
                   </p>

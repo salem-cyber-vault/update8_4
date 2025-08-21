@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Activity, AlertTriangle, Globe, Server, Eye, TrendingUp, Zap } from "lucide-react"
-import { getCurrentBotnets, type BotnetData } from "@/lib/api-client"
+import { getCurrentBotnets, type BotnetData } from "@/lib/api-integrations"
 import { BotnetDetailsModal } from "./botnet-details-modal"
 
 export function LiveBotnetTracker() {

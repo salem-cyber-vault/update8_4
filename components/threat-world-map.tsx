@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Globe, AlertTriangle } from "lucide-react"
-import { getThreatMapData, type ThreatMapData } from "@/lib/api-client"
+import { getThreatMapData, type ThreatMapData } from "@/lib/api-integrations"
 
 export function ThreatWorldMap() {
   const [threatData, setThreatData] = useState<ThreatMapData[]>([])
@@ -29,9 +29,9 @@ export function ThreatWorldMap() {
   }, [])
 
   const getThreatColor = (threats: number) => {
-    if (threats > 10000) return "bg-red-500"
-    if (threats > 5000) return "bg-orange-500"
-    if (threats > 1000) return "bg-yellow-500"
+  if (threats > 10000) { return "bg-red-500" }
+  if (threats > 5000) { return "bg-orange-500" }
+  if (threats > 1000) { return "bg-yellow-500" }
     return "bg-green-500"
   }
 
@@ -94,7 +94,7 @@ export function ThreatWorldMap() {
               </svg>
 
               {/* Overlay information */}
-              <div className="absolute top-4 left-4 space-y-2">
+              <div className="absolute top-4 left-4 space-y-2 bg-slate-900/80 rounded-lg p-3 pointer-events-none shadow-lg border border-slate-700">
                 <div className="flex items-center gap-2 text-sm text-slate-300">
                   <div className="w-3 h-3 bg-red-500 rounded-full"></div>
                   <span>Critical (10K+ threats)</span>

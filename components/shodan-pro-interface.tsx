@@ -28,9 +28,9 @@ import {
   Copy,
   CheckCircle,
 } from "lucide-react"
-import { searchShodan, getComprehensiveThreatIntel } from "@/lib/api-client"
+import { searchShodan, getComprehensiveThreatIntel } from "@/lib/api-integrations"
 import { CVEIntelligencePanel } from "./cve-intelligence-panel"
-import type { ShodanHost } from "@/lib/api-client"
+import type { ShodanHost } from "@/lib/api-integrations"
 
 interface ShodanProInterfaceProps {
   initialQuery?: string
@@ -122,7 +122,7 @@ export function ShodanProInterface({ initialQuery = "", initialHost }: ShodanPro
   ]
 
   const handleSearch = async (searchQuery: string = query) => {
-    if (!searchQuery.trim()) return
+  if (!searchQuery.trim()) { return }
 
     setLoading(true)
     setActiveTab("results")
@@ -130,12 +130,19 @@ export function ShodanProInterface({ initialQuery = "", initialHost }: ShodanPro
     try {
       // Build query with filters
       let finalQuery = searchQuery
-      if (filters.country) finalQuery += ` country:${filters.country}`
-      if (filters.port) finalQuery += ` port:${filters.port}`
-      if (filters.product) finalQuery += ` product:${filters.product}`
-      if (filters.org) finalQuery += ` org:"${filters.org}"`
-      if (filters.hasVulns) finalQuery += ` has_vuln:true`
-      if (filters.hasSSL) finalQuery += ` has_ssl:true`
+    if (filters.country) {
+      finalQuery += ` country:${filters.country}`
+    } else if (filters.port) {
+      finalQuery += ` port:${filters.port}`
+    } else if (filters.product) {
+      finalQuery += ` product:${filters.product}`
+    } else if (filters.org) {
+      finalQuery += ` org:"${filters.org}"`
+    } else if (filters.hasVulns) {
+      finalQuery += ` has_vuln:true`
+    } else if (filters.hasSSL) {
+      finalQuery += ` has_ssl:true`
+    }
 
       const searchResults = await searchShodan(finalQuery)
       setResults(searchResults.matches || [])
@@ -177,13 +184,13 @@ export function ShodanProInterface({ initialQuery = "", initialHost }: ShodanPro
 
   const getThreatLevel = (host: ShodanHost) => {
     let score = 0
-    if (host.vulns && host.vulns.length > 0) score += host.vulns.length * 2
-    if (threatIntel?.abuseipdb?.abuseConfidence > 75) score += 3
-    if (threatIntel?.virustotal?.data?.attributes?.last_analysis_stats?.malicious > 0) score += 2
+  if (host.vulns && host.vulns.length > 0) { score += host.vulns.length * 2 }
+  if (threatIntel?.abuseipdb?.abuseConfidence > 75) { score += 3 }
+  if (threatIntel?.virustotal?.data?.attributes?.last_analysis_stats?.malicious > 0) { score += 2 }
 
-    if (score > 5) return { level: "high", color: "text-red-400", bg: "bg-red-500/10" }
-    if (score > 2) return { level: "medium", color: "text-yellow-400", bg: "bg-yellow-500/10" }
-    return { level: "low", color: "text-green-400", bg: "bg-green-500/10" }
+  if (score > 5) { return { level: "high", color: "text-red-400", bg: "bg-red-500/10" } }
+  if (score > 2) { return { level: "medium", color: "text-yellow-400", bg: "bg-yellow-500/10" } }
+  return { level: "low", color: "text-green-400", bg: "bg-green-500/10" }
   }
 
   const copyToClipboard = (text: string) => {

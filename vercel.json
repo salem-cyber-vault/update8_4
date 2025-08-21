@@ -1,0 +1,13 @@
+{
+  "env": {
+    "AI_GATEWAY_API_KEY": "vck_4jprg8PcJQg3N78gs5H8BVNImg2x1zEEb91Ihvk1ceNiYsjEdV3SttG2"
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/$1" }
+  ],
+  "redirects": [],
+  "headers": [],
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "domain": "www.salemcybervault.com"
+}

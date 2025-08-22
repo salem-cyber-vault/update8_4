@@ -26,7 +26,7 @@ export default function MainDashboard() {
       <section id="unified-google" className="mb-12">
         <h2 className="text-2xl font-semibold mb-2">Old Google + Google CSE + Advanced Dorks</h2>
         <p className="mb-4 text-slate-400">Classic Google experience with dorks and CSE results, all in one panel.</p>
-        <UnifiedGoogleSearch apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY!} cseId={"26754e5f5ae0a4628"} />
+  <UnifiedGoogleSearch />
       </section>
       <section id="botnet-tracker" className="mb-12">
         <h2 className="text-2xl font-semibold mb-2">Live Botnet Tracker</h2>

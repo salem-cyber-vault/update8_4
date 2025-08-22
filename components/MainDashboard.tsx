@@ -24,9 +24,9 @@ export default function MainDashboard() {
         <AdvancedShodanDashboard />
       </section>
       <section id="unified-google" className="mb-12">
-        <h2 className="text-2xl font-semibold mb-2">Old Google + Google CSE + Advanced Dorks</h2>
-        <p className="mb-4 text-slate-400">Classic Google experience with dorks and CSE results, all in one panel.</p>
-  <UnifiedGoogleSearch />
+    <h2 className="text-2xl font-semibold mb-2">Unified Google Search</h2>
+    <p className="mb-4 text-slate-400">Search Google CSE with advanced dorks, see results instantly inside the app.</p>
+    <UnifiedGoogleSearch />
       </section>
       <section id="botnet-tracker" className="mb-12">
         <h2 className="text-2xl font-semibold mb-2">Live Botnet Tracker</h2>

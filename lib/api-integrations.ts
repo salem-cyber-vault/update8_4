@@ -1,58 +1,33 @@
 // Real API integrations with comprehensive error handling
 const API_CONFIG = {
+  JFROG: {
+    key: process.env.JFROG_API_KEY,
+    baseUrl: process.env.JFROG_XRAY_URL || "https://my.jfrog.com/xray/api/v1",
+  },
   SHODAN: {
-    key: process.env.SHODAN_API_KEY || "YOUR_SHODAN_KEY",
+    key: process.env.SHODAN_API_KEY,
     baseUrl: "https://api.shodan.io",
   },
   VIRUSTOTAL: {
-    key: process.env.VIRUSTOTAL_API_KEY || "YOUR_VT_KEY",
+    key: process.env.VIRUSTOTAL_API_KEY,
     baseUrl: "https://www.virustotal.com/api/v3",
   },
   GOOGLE_CSE: {
-    key: process.env.GOOGLE_API_KEY || "YOUR_GOOGLE_KEY",
-    cx: process.env.GOOGLE_CSE_ID || "YOUR_CSE_ID",
+    key: process.env.GOOGLE_API_KEY,
+    cx: process.env.GOOGLE_CSE_ID,
     baseUrl: "https://www.googleapis.com/customsearch/v1",
   },
   ABUSEIPDB: {
-    key: process.env.ABUSEIPDB_API_KEY || "YOUR_ABUSE_KEY",
+    key: process.env.ABUSEIPDB_API_KEY,
     baseUrl: "https://api.abuseipdb.com/api/v2",
   },
   GREYNOISE: {
-    key: process.env.GREYNOISE_API_KEY || "YOUR_GREYNOISE_KEY",
+    key: process.env.GREYNOISE_API_KEY,
     baseUrl: "https://api.greynoise.io/v3",
   },
 }
 
-// Check if APIs are properly configured
-const isConfigured = (apiKey: string) => apiKey && apiKey !== "YOUR_SHODAN_KEY" && !apiKey.includes("YOUR_")
 
-// Fallback data for demo purposes when APIs aren't configured
-const generateFallbackShodanData = (query: string) => ({
-  matches: [
-    {
-      ip_str: "192.168.1.100",
-      port: 80,
-      transport: "tcp",
-      product: "Apache httpd",
-      version: "2.4.41",
-      title: "Apache2 Ubuntu Default Page",
-      location: {
-        country_name: "United States",
-        city: "New York",
-        region_code: "NY",
-      },
-      org: "Example Corp",
-      isp: "Example ISP",
-      asn: "AS12345",
-      hostnames: ["example.com"],
-      domains: ["example.com"],
-      timestamp: new Date().toISOString(),
-      vulns: query.includes("vuln") ? ["CVE-2024-1234"] : [],
-      tags: ["web", "http"],
-    },
-  ],
-  total: 1,
-})
 
 export interface ShodanHost {
   ip_str: string
@@ -130,14 +105,38 @@ export interface LiveThreatEvent {
   }
 }
 
+// JFrog Xray Vulnerability Intelligence
+export async function getJFrogVulnerabilities(artifact: string): Promise<any> {
+  try {
+    if (!API_CONFIG.JFROG.key || !API_CONFIG.JFROG.baseUrl) {
+      throw new Error("JFrog API key or base URL not set");
+    }
+    const response = await fetch(
+      `${API_CONFIG.JFROG.baseUrl}/summary/artifact`,
+      {
+        method: "POST",
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${API_CONFIG.JFROG.key}`,
+        }),
+        body: JSON.stringify({
+          component_id: artifact,
+        }),
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`JFrog Xray error: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("JFrog Xray vulnerability lookup failed:", error);
+    return null;
+  }
+}
+
 // Shodan API Integration
 export async function searchShodan(query: string, facets?: string[]): Promise<any> {
   try {
-    if (!isConfigured(API_CONFIG.SHODAN.key)) {
-      console.warn("Shodan API key not configured, using fallback data")
-      return generateFallbackShodanData(query)
-    }
-
     const facetParam = facets ? `&facets=${facets.join(",")}` : ""
     const response = await fetch(
       `${API_CONFIG.SHODAN.baseUrl}/shodan/host/search?key=${API_CONFIG.SHODAN.key}&query=${encodeURIComponent(query)}${facetParam}`,
@@ -153,8 +152,7 @@ export async function searchShodan(query: string, facets?: string[]): Promise<an
     return await response.json()
   } catch (error) {
     console.error("Shodan search failed:", error)
-    // Return fallback data instead of throwing
-    return generateFallbackShodanData(query)
+    throw error
   }
 }
 
@@ -196,16 +194,15 @@ export async function performGoogleDork(dork: string): Promise<GoogleDorkResult[
 // VirusTotal Integration
 export async function analyzeWithVirusTotal(resource: string, type: "ip" | "domain" | "url"): Promise<any> {
   try {
-    const endpoint = type === "ip" ? "ip_addresses" : type === "domain" ? "domains" : "urls"
+    const endpoint = type === "ip" ? "ip_addresses" : type === "domain" ? "domains" : "urls";
     const response = await fetch(`${API_CONFIG.VIRUSTOTAL.baseUrl}/${endpoint}/${resource}`, {
-      headers: { "x-apikey": API_CONFIG.VIRUSTOTAL.key },
-    })
-
-    if (!response.ok) throw new Error(`VirusTotal error: ${response.status}`)
-    return await response.json()
+      headers: new Headers({ "x-apikey": API_CONFIG.VIRUSTOTAL.key ?? "" }),
+    });
+    if (!response.ok) { throw new Error(`VirusTotal error: ${response.status}`); }
+    return await response.json();
   } catch (error) {
-    console.error("VirusTotal analysis failed:", error)
-    throw error
+    console.error("VirusTotal analysis failed:", error);
+    throw error;
   }
 }
 
@@ -235,32 +232,30 @@ export async function getComprehensiveThreatIntel(ip: string) {
 async function getAbuseIPDBReport(ip: string): Promise<any> {
   try {
     const response = await fetch(`${API_CONFIG.ABUSEIPDB.baseUrl}/check?ipAddress=${ip}&maxAgeInDays=90&verbose`, {
-      headers: {
-        Key: API_CONFIG.ABUSEIPDB.key,
+      headers: new Headers({
+        Key: API_CONFIG.ABUSEIPDB.key ?? "",
         Accept: "application/json",
-      },
-    })
-
-    if (!response.ok) throw new Error(`AbuseIPDB API error: ${response.status}`)
-    const result = await response.json()
-    return result.data
+      }),
+    });
+    if (!response.ok) { throw new Error(`AbuseIPDB API error: ${response.status}`); }
+    const result = await response.json();
+    return result.data;
   } catch (error) {
-    console.error("AbuseIPDB lookup failed:", error)
-    return null
+    console.error("AbuseIPDB lookup failed:", error);
+    return null;
   }
 }
 
 async function getGreyNoiseContext(ip: string): Promise<any> {
   try {
     const response = await fetch(`${API_CONFIG.GREYNOISE.baseUrl}/community/${ip}`, {
-      headers: { key: API_CONFIG.GREYNOISE.key },
-    })
-
-    if (!response.ok) throw new Error(`GreyNoise API error: ${response.status}`)
-    return await response.json()
+      headers: new Headers({ key: API_CONFIG.GREYNOISE.key ?? "" }),
+    });
+    if (!response.ok) { throw new Error(`GreyNoise API error: ${response.status}`); }
+    return await response.json();
   } catch (error) {
-    console.error("GreyNoise lookup failed:", error)
-    return null
+    console.error("GreyNoise lookup failed:", error);
+    return null;
   }
 }
 
@@ -298,15 +293,14 @@ async function getAbuseIPDBThreats(): Promise<any> {
     const response = await fetch(
       `${API_CONFIG.ABUSEIPDB.baseUrl}/blacklist?key=${API_CONFIG.ABUSEIPDB.key}&limit=1000`,
       {
-        headers: { Key: API_CONFIG.ABUSEIPDB.key },
+        headers: new Headers({ Key: API_CONFIG.ABUSEIPDB.key ?? "" }),
       },
-    )
-
-    if (!response.ok) throw new Error(`AbuseIPDB error: ${response.status}`)
-    return await response.json()
+    );
+    if (!response.ok) { throw new Error(`AbuseIPDB error: ${response.status}`); }
+    return await response.json();
   } catch (error) {
-    console.error("AbuseIPDB failed:", error)
-    return { data: [] }
+    console.error("AbuseIPDB failed:", error);
+    return { data: [] };
   }
 }
 
@@ -331,11 +325,10 @@ export async function getLiveThreatFeed(): Promise<LiveThreatEvent[]> {
 async function getGreyNoiseActivity(): Promise<any> {
   try {
     const response = await fetch(`${API_CONFIG.GREYNOISE.baseUrl}/community/timeline`, {
-      headers: { key: API_CONFIG.GREYNOISE.key },
-    })
-
-    if (!response.ok) throw new Error(`GreyNoise error: ${response.status}`)
-    return await response.json()
+      headers: new Headers({ key: API_CONFIG.GREYNOISE.key ?? "" }),
+    });
+    if (!response.ok) { throw new Error(`GreyNoise error: ${response.status}`); }
+    return await response.json();
   } catch (error) {
     console.error("GreyNoise failed:", error)
     return { data: [] }
@@ -345,7 +338,7 @@ async function getGreyNoiseActivity(): Promise<any> {
 async function getShodanAlerts(): Promise<any> {
   try {
     const response = await fetch(`${API_CONFIG.SHODAN.baseUrl}/shodan/alert/info?key=${API_CONFIG.SHODAN.key}`)
-    if (!response.ok) throw new Error(`Shodan alerts error: ${response.status}`)
+  if (!response.ok) { throw new Error(`Shodan alerts error: ${response.status}`); }
     return await response.json()
   } catch (error) {
     console.error("Shodan alerts failed:", error)
@@ -366,12 +359,12 @@ function processBotnetData(shodanData: any, threatIntel: any): BotnetData[] {
       botnets.push({
         name,
         size: hosts.length,
-        countries: [...new Set(hosts.map((h: any) => h.location.country_name))],
+  countries: [...new Set(hosts.map((h: any) => String(h.location.country_name)))],
         lastSeen: new Date().toISOString(),
         threatLevel: assessThreatLevel(hosts.length),
         description: generateBotnetDescription(name, hosts),
         c2Servers: extractC2Servers(hosts),
-        affectedPorts: [...new Set(hosts.map((h: any) => h.port))],
+  affectedPorts: [...new Set(hosts.map((h: any) => Number(h.port)))],
       })
     })
   }
@@ -435,16 +428,16 @@ function assessRiskLevel(link: string, snippet: string): "info" | "low" | "mediu
 
   const text = (link + " " + snippet).toLowerCase()
 
-  if (highRiskIndicators.some((indicator) => text.includes(indicator))) return "high"
-  if (mediumRiskIndicators.some((indicator) => text.includes(indicator))) return "medium"
+  if (highRiskIndicators.some((indicator) => text.includes(indicator))) { return "high"; }
+  if (mediumRiskIndicators.some((indicator) => text.includes(indicator))) { return "medium"; }
   return "low"
 }
 
 function categorizeResult(link: string, snippet: string): string {
-  if (link.includes("admin") || snippet.includes("admin")) return "Admin Panel"
-  if (link.includes("login") || snippet.includes("login")) return "Login Page"
-  if (snippet.includes("index of")) return "Directory Listing"
-  if (link.includes("config") || snippet.includes("config")) return "Configuration"
+  if (link.includes("admin") || snippet.includes("admin")) { return "Admin Panel"; }
+  if (link.includes("login") || snippet.includes("login")) { return "Login Page"; }
+  if (snippet.includes("index of")) { return "Directory Listing"; }
+  if (link.includes("config") || snippet.includes("config")) { return "Configuration"; }
   return "General"
 }
 
@@ -453,7 +446,7 @@ function groupBotnetsBySignature(hosts: any[]): Record<string, any[]> {
 
   hosts.forEach((host) => {
     const signature = identifyBotnetSignature(host)
-    if (!groups[signature]) groups[signature] = []
+  if (!groups[signature]) { groups[signature] = []; }
     groups[signature].push(host)
   })
 
@@ -462,17 +455,17 @@ function groupBotnetsBySignature(hosts: any[]): Record<string, any[]> {
 
 function identifyBotnetSignature(host: any): string {
   // Identify botnet based on various indicators
-  if (host.product?.toLowerCase().includes("mirai")) return "Mirai"
-  if (host.data?.includes("Gafgyt")) return "Gafgyt"
-  if (host.port === 23 && host.product?.includes("telnet")) return "IoT Botnet"
-  if (host.vulns?.some((v: string) => v.includes("CVE-2017"))) return "Legacy Exploit Botnet"
+  if (host.product?.toLowerCase().includes("mirai")) { return "Mirai"; }
+  if (host.data?.includes("Gafgyt")) { return "Gafgyt"; }
+  if (host.port === 23 && host.product?.includes("telnet")) { return "IoT Botnet"; }
+  if (host.vulns?.some((v: string) => v.includes("CVE-2017"))) { return "Legacy Exploit Botnet"; }
   return "Unknown Botnet"
 }
 
 function assessThreatLevel(size: number): "low" | "medium" | "high" | "critical" {
-  if (size > 10000) return "critical"
-  if (size > 1000) return "high"
-  if (size > 100) return "medium"
+  if (size > 10000) { return "critical"; }
+  if (size > 1000) { return "high"; }
+  if (size > 100) { return "medium"; }
   return "low"
 }
 
@@ -512,13 +505,13 @@ function extractMalwareTypes(countryCode: string): string[] {
 }
 
 function categorizeEventType(classification: string): "malware" | "botnet" | "phishing" | "vulnerability" | "breach" {
-  if (classification?.includes("malicious")) return "malware"
-  if (classification?.includes("bot")) return "botnet"
+  if (classification?.includes("malicious")) { return "malware"; }
+  if (classification?.includes("bot")) { return "botnet"; }
   return "vulnerability"
 }
 
 function mapSeverity(classification: string): "low" | "medium" | "high" | "critical" {
-  if (classification?.includes("malicious")) return "high"
-  if (classification?.includes("suspicious")) return "medium"
+  if (classification?.includes("malicious")) { return "high"; }
+  if (classification?.includes("suspicious")) { return "medium"; }
   return "low"
 }

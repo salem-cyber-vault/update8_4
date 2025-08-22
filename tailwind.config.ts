@@ -43,7 +43,7 @@ const config: Config = {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'
   			},
-  			border: 'hsl(var(--border))',
+  			border: 'hsl(0 0% 89.8%)', // Using direct HSL value instead of CSS variable
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
   			chart: {
@@ -51,7 +51,7 @@ const config: Config = {
   				'2': 'hsl(var(--chart-2))',
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
-  				'5':.
+  				'5': 'hsl(var(--chart-5))'
   			},
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',

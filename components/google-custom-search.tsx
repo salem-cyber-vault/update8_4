@@ -68,8 +68,97 @@ export function GoogleCustomSearch() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div ref={searchContainerRef} className="gcse-search-container" style={{ minHeight: "60px" }}>
-          <div className="gcse-search" data-enableHistory="false"></div>
+        <div
+          ref={searchContainerRef}
+          className="gcse-search-container"
+          style={{ minHeight: "60px", background: "#18181b", color: "#fafafa", borderRadius: "0.5rem", padding: "1rem" }}
+        >
+            <div className="gcse-search" data-enableHistory="false"></div>
+            <style>{`
+              /* Google CSE input and button dark mode override */
+              #cse-search-box input.gsc-input {
+                background: #18181b !important;
+                color: #fafafa !important;
+                border: 1px solid #6d28d9 !important;
+              }
+              #cse-search-box input.gsc-input::placeholder {
+                color: #a3a3a3 !important;
+              }
+              #cse-search-box .gsc-search-button {
+                background: #6d28d9 !important;
+                border: 1px solid #6d28d9 !important;
+              }
+              #cse-search-box .gsc-search-button input {
+                color: #fafafa !important;
+              }
+              #cse-search-box .gsc-search-box-tools .gsc-search-box .gsc-input-box {
+                background: #18181b !important;
+              }
+            `}</style>
+          <style>{`
+            .gcse-search input, .gsc-input-box, .gsc-input {
+              background: #18181b !important;
+              color: #fafafa !important;
+              border: 1px solid #6b21a8 !important;
+            }
+            .gcse-search .gsc-search-button-v2 {
+              background: #6b21a8 !important;
+              color: #fff !important;
+              border-radius: 0.375rem !important;
+            }
+            .gcse-search .gsc-tabHeader.gsc-tabhInactive {
+              background: #18181b !important;
+              color: #a3a3a3 !important;
+            }
+            .gcse-search .gsc-tabHeader.gsc-tabhActive {
+              background: #6b21a8 !important;
+              color: #fff !important;
+            }
+            .gcse-search .gsc-webResult.gsc-result,
+            .gcse-search .gsc-results .gsc-result,
+            .gcse-search .gsc-results,
+            .gcse-search .gsc-result {
+              background: #18181b !important;
+              color: #fafafa !important;
+              border-radius: 0.375rem !important;
+              border: 1px solid #6b21a8 !important;
+              margin-bottom: 1rem !important;
+            }
+            .gcse-search .gsc-url-top,
+            .gcse-search .gs-spelling,
+            .gcse-search .gs-snippet,
+            .gcse-search .gs-title,
+            .gcse-search .gsc-title {
+              color: #a3e635 !important;
+            }
+            .gcse-search .gsc-result .gs-no-results,
+            .gcse-search .gsc-result .gs-snippet,
+            .gcse-search .gsc-result .gs-title {
+              color: #fafafa !important;
+            }
+            .gcse-search .gsc-result .gs-visibleUrl {
+              color: #38bdf8 !important;
+            }
+            .gcse-search .gsc-result .gs-spelling {
+              color: #a3e635 !important;
+            }
+            .gcse-search .gsc-result .gs-snippet {
+              color: #fafafa !important;
+            }
+            .gcse-search .gsc-result .gs-title a {
+              color: #a3e635 !important;
+            }
+            .gcse-search .gsc-result .gs-no-results {
+              background: #18181b !important;
+              color: #f87171 !important;
+              border-radius: 0.375rem !important;
+              border: 1px solid #6b21a8 !important;
+              padding: 0.5rem !important;
+            }
+            .gcse-search .gsc-result .gs-snippet b {
+              color: #facc15 !important;
+            }
+          `}</style>
         </div>
 
         <Card className="bg-purple-900/20 border-purple-500/30">

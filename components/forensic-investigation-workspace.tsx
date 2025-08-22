@@ -31,7 +31,7 @@ import {
   ChevronRight,
 } from "lucide-react"
 
-interface Investigation {
+export interface Investigation {
   id: string
   title: string
   description: string
@@ -45,7 +45,7 @@ interface Investigation {
   tags: string[]
 }
 
-interface Finding {
+export interface Finding {
   id: string
   type: "ip" | "domain" | "cve" | "malware" | "indicator" | "note"
   title: string
@@ -58,7 +58,7 @@ interface Finding {
   metadata?: Record<string, any>
 }
 
-interface TimelineEvent {
+export interface TimelineEvent {
   id: string
   timestamp: string
   title: string
@@ -226,51 +226,9 @@ export function ForensicInvestigationWorkspace() {
 
     setIntelligencePanels(panels)
 
-    // Simulate API calls with mock data
-    setTimeout(() => {
-      const mockData = {
-        shodan: {
-          ip: target,
-          ports: [22, 80, 443, 8080],
-          services: ["SSH", "HTTP", "HTTPS", "HTTP-Proxy"],
-          vulnerabilities: ["CVE-2024-1234", "CVE-2023-5678"],
-          location: { country: "US", city: "New York" },
-          org: "Example Hosting Inc",
-        },
-        virustotal: {
-          detections: 15,
-          totalEngines: 70,
-          malicious: 8,
-          suspicious: 7,
-          lastAnalysis: new Date().toISOString(),
-          reputation: "malicious",
-        },
-        whois: {
-          domain: target,
-          registrar: "Example Registrar",
-          createdDate: "2020-01-15",
-          expiryDate: "2025-01-15",
-          nameservers: ["ns1.example.com", "ns2.example.com"],
-        },
-        geolocation: {
-          ip: target,
-          country: "United States",
-          region: "New York",
-          city: "New York",
-          lat: 40.7128,
-          lng: -74.006,
-          isp: "Example ISP",
-        },
-      }
 
-      setIntelligencePanels((prev) =>
-        prev.map((panel) => ({
-          ...panel,
-          loading: false,
-          data: mockData[panel.type as keyof typeof mockData],
-        })),
-      )
-    }, 2000)
+  // TODO: Replace with real API call for panel data
+  // Example: fetchPanelData(panel.type).then(data => setIntelligencePanels((prev) => prev.map(panel => ({ ...panel, loading: false, data }))))
   }
 
   const getSeverityColor = (severity: string) => {

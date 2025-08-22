@@ -8,6 +8,5 @@
   "redirects": [],
   "headers": [],
   "cleanUrls": true,
-  "trailingSlash": false,
-  "domains": ["salemcybervault.com"]
+  "trailingSlash": false
 }

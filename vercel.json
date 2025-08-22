@@ -9,5 +9,5 @@
   "headers": [],
   "cleanUrls": true,
   "trailingSlash": false,
-  "domain": "www.salemcybervault.com"
+  "domains": ["salemcybervault.com"]
 }

@@ -40,3 +40,6 @@ coverage/
 # Ignore build artifacts
 build/
 dist/
+.vercel
+
+.early.coverage

@@ -617,7 +617,8 @@ export async function getComprehensiveTrendingVulnerabilities(
       getAllPages: getAllData,
     }
 
-    const result = await searchCVEsComprehensive("", searchOptions)
+  // Use a generic product name for trending search to avoid empty error
+  const result = await searchCVEsComprehensive("all", searchOptions)
 
     if ("cves" in result) {
       let cves = result.cves

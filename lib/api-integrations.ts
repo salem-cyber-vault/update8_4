@@ -229,7 +229,7 @@ export async function getComprehensiveThreatIntel(ip: string) {
   }
 }
 
-async function getAbuseIPDBReport(ip: string): Promise<any> {
+export async function getAbuseIPDBReport(ip: string): Promise<any> {
   try {
     const response = await fetch(`${API_CONFIG.ABUSEIPDB.baseUrl}/check?ipAddress=${ip}&maxAgeInDays=90&verbose`, {
       headers: new Headers({
@@ -246,7 +246,7 @@ async function getAbuseIPDBReport(ip: string): Promise<any> {
   }
 }
 
-async function getGreyNoiseContext(ip: string): Promise<any> {
+export async function getGreyNoiseContext(ip: string): Promise<any> {
   try {
     const response = await fetch(`${API_CONFIG.GREYNOISE.baseUrl}/community/${ip}`, {
       headers: new Headers({ key: API_CONFIG.GREYNOISE.key ?? "" }),
@@ -359,12 +359,12 @@ function processBotnetData(shodanData: any, threatIntel: any): BotnetData[] {
       botnets.push({
         name,
         size: hosts.length,
-  countries: [...new Set(hosts.map((h: any) => String(h.location.country_name)))],
+  countries: [...new Set(hosts.map((h: any) => String(h.location.country_name)))] as string[],
         lastSeen: new Date().toISOString(),
         threatLevel: assessThreatLevel(hosts.length),
         description: generateBotnetDescription(name, hosts),
         c2Servers: extractC2Servers(hosts),
-  affectedPorts: [...new Set(hosts.map((h: any) => Number(h.port)))],
+  affectedPorts: [...new Set(hosts.map((h: any) => Number(h.port)))] as number[],
       })
     })
   }

@@ -1,10 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server"
 import {
   getComprehensiveThreatIntel,
-  getVirusTotalIPReport,
+  analyzeWithVirusTotal,
   getAbuseIPDBReport,
   getGreyNoiseContext,
-} from "@/lib/api-client"
+  getCurrentBotnets,
+  getThreatMapData,
+  getLiveThreatFeed,
+} from "@/lib/api-integrations"
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,34 +23,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid IP address format" }, { status: 400 })
     }
 
-    let results
+  let results: Record<string, any> = {}
     if (sources && Array.isArray(sources)) {
-      // Get specific sources
-      const promises = []
-      if (sources.includes("virustotal")) promises.push(getVirusTotalIPReport(ip))
-      if (sources.includes("abuseipdb")) promises.push(getAbuseIPDBReport(ip))
-      if (sources.includes("greynoise")) promises.push(getGreyNoiseContext(ip))
-
-      const settled = await Promise.allSettled(promises)
-      results = {
-        virustotal: sources.includes("virustotal")
-          ? settled[0]?.status === "fulfilled"
-            ? settled[0].value
-            : null
-          : null,
-        abuseipdb: sources.includes("abuseipdb")
-          ? settled[1]?.status === "fulfilled"
-            ? settled[1].value
-            : null
-          : null,
-        greynoise: sources.includes("greynoise")
-          ? settled[2]?.status === "fulfilled"
-            ? settled[2].value
-            : null
-          : null,
+      // Get specific sources, always real data
+      if (sources.includes("virustotal")) {
+        results.virustotal = await analyzeWithVirusTotal(ip, "ip")
+      }
+      if (sources.includes("abuseipdb")) {
+        results.abuseipdb = await getAbuseIPDBReport(ip)
+      }
+      if (sources.includes("greynoise")) {
+        results.greynoise = await getGreyNoiseContext(ip)
+      }
+      if (sources.includes("botnets")) {
+        results.botnets = await getCurrentBotnets()
+      }
+      if (sources.includes("threatmap")) {
+        results.threatmap = await getThreatMapData()
+      }
+      if (sources.includes("livefeed")) {
+        results.livefeed = await getLiveThreatFeed()
       }
     } else {
-      // Get comprehensive intel from all sources
+      // Get comprehensive intel from all sources, always real data
       results = await getComprehensiveThreatIntel(ip)
     }
 

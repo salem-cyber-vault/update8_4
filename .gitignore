@@ -6,6 +6,7 @@ node_modules/
 
 # Logs
 *.log
+.geck/logs/
 
 # OS files
 .DS_Store

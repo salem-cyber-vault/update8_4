@@ -43,3 +43,6 @@ dist/
 .vercel
 
 .early.coverage
+
+# Git hooks (keep local only)
+.git/hooks/

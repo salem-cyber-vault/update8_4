@@ -6,6 +6,16 @@ interface GoogleCSEProps {
   cseId: string;
 }
 
+interface SearchResult {
+  link: string;
+  title: string;
+  snippet: string;
+  displayLink: string;
+  pagemap?: {
+    cse_thumbnail?: Array<{ src: string }>;
+  };
+}
+
 const PRESELECTED_DORKS = [
   "site:pastebin.com password",
   "intitle:index.of env",
@@ -19,7 +29,7 @@ const PRESELECTED_DORKS = [
 
 const GoogleCustomSearchPanel: React.FC<GoogleCSEProps> = ({ apiKey, cseId }) => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [totalResults, setTotalResults] = useState<string>("");
@@ -65,7 +75,7 @@ const GoogleCustomSearchPanel: React.FC<GoogleCSEProps> = ({ apiKey, cseId }) =>
   const highlightText = (text: string) => {
     if (!query) return text;
     const terms = query.split(/\s+/).filter(Boolean);
-    const regex = new RegExp(`(${terms.map((t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
+    const regex = new RegExp(`(${terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
     return text.replace(regex, match => `<span class='bg-yellow-400 text-black px-1 rounded'>${match}</span>`);
   };
 
@@ -116,7 +126,7 @@ const GoogleCustomSearchPanel: React.FC<GoogleCSEProps> = ({ apiKey, cseId }) =>
         <div className="text-zinc-400">No results found.</div>
       )}
       <ul className="space-y-6">
-        {results.map((item: any) => (
+        {results.map((item: SearchResult) => (
           <li
             key={item.link}
             className="flex flex-col md:flex-row gap-4 items-start bg-zinc-950 rounded-lg shadow border border-zinc-800 p-4 transition hover:shadow-lg hover:border-violet-700"

@@ -293,12 +293,19 @@ export async function searchCVEsComprehensive(
     throw new Error("Product name cannot be empty")
   }
 
+  const emptyResult = (limit: number, skip: number): CVESearchResult => ({
+    cves: [],
+    total: 0,
+    limit,
+    skip,
+  })
+
   try {
     const result = await makeCirclAPIRequest<any>(`action=search&product=${encodeURIComponent(cleanProduct)}`)
 
     if (result && Array.isArray(result)) {
       const cpes = result.map((item) => item.id || `cpe:2.3:a:*:${cleanProduct}:*:*:*:*:*:*:*:*`)
-      return { cpes: cpes.slice(0, options.limit || 100), cves: [], total: 0, limit: options.limit || 100, skip: options.skip || 0 }
+      return { ...emptyResult(options.limit || 100, options.skip || 0), cpes: cpes.slice(0, options.limit || 100) }
     }
   } catch (error) {
     console.warn(`[CVEDB] CIRCL CVE search failed, using generated CPEs:`, error)

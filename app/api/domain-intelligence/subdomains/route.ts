@@ -12,7 +12,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Domain parameter is required" }, { status: 400 })
     }
 
-    const results = {
+    const results: {
+      subdomains: Array<{ subdomain: string; source: string; firstSeen: string; lastSeen: string }>
+      certificates: Array<{ subdomain: string; source: string; issuer: string; validFrom: string; validTo: string }>
+      passiveDns: Array<{ subdomain: string; source: string; ip: string; type: string; firstSeen: string }>
+      dnsHistory: Array<{ ip: string; firstSeen: string; lastSeen: string; type: string }>
+    } = {
       subdomains: [],
       certificates: [],
       passiveDns: [],
@@ -99,10 +104,10 @@ export async function GET(request: NextRequest) {
           console.log("[v0] crt.sh API returned non-OK status:", response.status, response.statusText)
         }
       } catch (error) {
-        if (error.name === "AbortError") {
+        if (error instanceof Error && error.name === "AbortError") {
           console.log("[v0] crt.sh lookup timed out after 10 seconds")
         } else {
-          console.log("[v0] crt.sh lookup failed with error:", error.message)
+          console.log("[v0] crt.sh lookup failed with error:", error instanceof Error ? error.message : String(error))
         }
 
         results.certificates = [

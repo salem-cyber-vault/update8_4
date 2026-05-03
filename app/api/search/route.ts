@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { searchShodan, performGoogleDork } from "@/lib/api-client"
+import { searchShodan, performGoogleDork } from "@/lib/api-integrations"
 
 export async function POST(request: NextRequest) {
   try {

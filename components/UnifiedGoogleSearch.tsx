@@ -62,7 +62,7 @@ const UnifiedGoogleSearch: React.FC = () => {
   const highlightText = (text: string) => {
     if (!query) { return text; }
     const terms = query.split(/\s+/).filter(Boolean);
-    const regex = new RegExp(`(${terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
+    const regex = new RegExp(`(${terms.map((t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
     return text.replace(regex, match => `<span class='bg-yellow-400 text-black px-1 rounded'>${match}</span>`);
   };
 
@@ -72,7 +72,7 @@ const UnifiedGoogleSearch: React.FC = () => {
         <input
           type="text"
           value={query}
-          onChange={e => setQuery(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
           placeholder="Search Google..."
           className="bg-zinc-800 text-zinc-100 border border-violet-700 rounded px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-violet-700"
         />
@@ -112,7 +112,7 @@ const UnifiedGoogleSearch: React.FC = () => {
         <div className="text-zinc-400">No results found.</div>
       )}
       <ul className="space-y-6">
-        {results.map(item => (
+        {results.map((item: any) => (
           <li
             key={item.link}
             className="flex flex-col md:flex-row gap-4 items-start bg-zinc-950 rounded-lg shadow border border-zinc-800 p-4 transition hover:shadow-lg hover:border-violet-700"

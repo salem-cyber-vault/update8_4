@@ -1,7 +1,9 @@
 import { supabase } from './client'
 import { Investigation, Finding, TimelineEvent } from '@/components/forensic-investigation-workspace'
+import { isSupabaseConfigured } from './server'
 
 export type { Investigation, Finding, TimelineEvent }
+export { isSupabaseConfigured }
 
 export const InvestigationDB = {
 	async getInvestigations() {
@@ -13,7 +15,7 @@ export const InvestigationDB = {
 		return data || []
 	},
 
-	async createInvestigation(investigation) {
+	async createInvestigation(investigation: Omit<Investigation, 'id' | 'createdAt' | 'updatedAt' | 'findings' | 'timeline'>) {
 		const { data, error } = await supabase
 			.from('investigations')
 			.insert([investigation])
@@ -23,7 +25,7 @@ export const InvestigationDB = {
 		return data
 	},
 
-	async addFinding(finding) {
+	async addFinding(finding: any) {
 		const { data, error } = await supabase
 			.from('findings')
 			.insert([finding])
@@ -33,7 +35,7 @@ export const InvestigationDB = {
 		return data
 	},
 
-	async getFindings(investigationId) {
+	async getFindings(investigationId: string) {
 		const { data, error } = await supabase
 			.from('findings')
 			.select('*')
@@ -43,7 +45,7 @@ export const InvestigationDB = {
 		return data || []
 	},
 
-	async addTimelineEvent(event) {
+	async addTimelineEvent(event: any) {
 		const { data, error } = await supabase
 			.from('timeline_events')
 			.insert([event])
@@ -53,7 +55,7 @@ export const InvestigationDB = {
 		return data
 	},
 
-	async getTimelineEvents(investigationId) {
+	async getTimelineEvents(investigationId: string) {
 		const { data, error } = await supabase
 			.from('timeline_events')
 			.select('*')
@@ -64,21 +66,21 @@ export const InvestigationDB = {
 	},
 
 	// Dummy real-time subscription methods (implement with supabase.realtime if needed)
-	subscribeToInvestigations(callback) {
+	subscribeToInvestigations(callback: (payload: any) => void) {
 		// Implement real-time subscription if needed
 		return { unsubscribe: () => {} }
 	},
-	subscribeToFindings(investigationId, callback) {
+	subscribeToFindings(investigationId: string, callback: (payload: any) => void) {
 		// Implement real-time subscription if needed
 		return { unsubscribe: () => {} }
 	},
-	subscribeToTimelineEvents(investigationId, callback) {
+	subscribeToTimelineEvents(investigationId: string, callback: (payload: any) => void) {
 		// Implement real-time subscription if needed
 		return { unsubscribe: () => {} }
 	},
 }
 
-export async function getUserProfile(userId) {
+export async function getUserProfile(userId: string) {
 	const { data, error } = await supabase
 		.from('profiles')
 		.select('*')

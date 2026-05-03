@@ -14,7 +14,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Domain or IP parameter is required' }, { status: 400 })
     }
 
-    const results = {
+    const results: {
+      reverseIP: Array<{ name: string }>
+      relatedDomains: Array<{ domain: string; relation: string }>
+      dnsNeighbors: Array<{ name: string }>
+      ipHistory: Array<{ ip: string; date: string; location: string }>
+    } = {
       reverseIP: [],
       relatedDomains: [],
       dnsNeighbors: [],

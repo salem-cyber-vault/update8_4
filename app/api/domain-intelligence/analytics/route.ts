@@ -12,7 +12,21 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Domain parameter is required' }, { status: 400 })
     }
 
-    const results = {
+    const results: {
+      traffic: null | {
+        globalRank: number | string | undefined
+        countryRank: number | string | undefined
+        categoryRank: number | string | undefined
+        monthlyVisits: number | string | undefined
+        bounceRate: number | string | undefined
+        avgSessionDuration: number | string | undefined
+      }
+      technologies: Array<{ name: string; category: string; firstDetected: string; lastDetected: string; confidence: string }>
+      socialMedia: Record<string, unknown>
+      seo: Record<string, unknown>
+      competitors: string[]
+      relatedByTech: Array<{ technology: string; relatedDomains: string[] }>
+    } = {
       traffic: null,
       technologies: [],
       socialMedia: {},

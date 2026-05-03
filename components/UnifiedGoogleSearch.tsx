@@ -2,6 +2,16 @@
 
 import React, { useState } from "react";
 
+interface SearchResult {
+  link: string;
+  title: string;
+  snippet: string;
+  displayLink: string;
+  pagemap?: {
+    cse_thumbnail?: Array<{ src: string }>;
+  };
+}
+
 const PRESELECTED_DORKS = [
   "site:pastebin.com password",
   "intitle:index.of env",
@@ -15,7 +25,7 @@ const PRESELECTED_DORKS = [
 
 const UnifiedGoogleSearch: React.FC = () => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [totalResults, setTotalResults] = useState<string>("");
@@ -72,7 +82,7 @@ const UnifiedGoogleSearch: React.FC = () => {
         <input
           type="text"
           value={query}
-          onChange={e => setQuery(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
           placeholder="Search Google..."
           className="bg-zinc-800 text-zinc-100 border border-violet-700 rounded px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-violet-700"
         />
@@ -112,7 +122,7 @@ const UnifiedGoogleSearch: React.FC = () => {
         <div className="text-zinc-400">No results found.</div>
       )}
       <ul className="space-y-6">
-        {results.map(item => (
+        {results.map((item: SearchResult) => (
           <li
             key={item.link}
             className="flex flex-col md:flex-row gap-4 items-start bg-zinc-950 rounded-lg shadow border border-zinc-800 p-4 transition hover:shadow-lg hover:border-violet-700"

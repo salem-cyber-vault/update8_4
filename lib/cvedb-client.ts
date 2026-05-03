@@ -114,6 +114,7 @@ export async function searchCVEsByProduct(
     limit?: number
     startDate?: string
     endDate?: string
+    daysBack?: number
   } = {},
 ): Promise<CVESearchResult | CVEsTotal> {
   try {

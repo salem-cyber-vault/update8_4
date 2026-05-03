@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Activity, AlertTriangle, Shield, Globe, Clock, MapPin, Zap, Eye } from "lucide-react"
-import { getLiveThreatFeed, type LiveThreatEvent } from "@/lib/api-client"
+import { getLiveThreatFeed, type LiveThreatEvent } from "@/lib/api-integrations"
 
 export function LiveThreatFeed() {
   const [threats, setThreats] = useState<LiveThreatEvent[]>([])

@@ -50,8 +50,8 @@ export function DatabasePoweredInvestigationTracker() {
   useEffect(() => {
     if (!isSupabaseConfigured) return
 
-    const investigationsSubscription = InvestigationDB.subscribeToInvestigations((payload) => {
-      console.log("Investigation update:", payload)
+    const investigationsSubscription = InvestigationDB.subscribeToInvestigations((_payload: any) => {
+      console.log("Investigation update:", _payload)
       loadInvestigations()
     })
 
@@ -63,13 +63,13 @@ export function DatabasePoweredInvestigationTracker() {
   useEffect(() => {
     if (!activeInvestigation || !isSupabaseConfigured) return
 
-    const findingsSubscription = InvestigationDB.subscribeToFindings(activeInvestigation.id, (payload) => {
-      console.log("Finding update:", payload)
+    const findingsSubscription = InvestigationDB.subscribeToFindings(activeInvestigation.id, (_payload: any) => {
+      console.log("Finding update:", _payload)
       loadFindings(activeInvestigation.id)
     })
 
-    const timelineSubscription = InvestigationDB.subscribeToTimelineEvents(activeInvestigation.id, (payload) => {
-      console.log("Timeline update:", payload)
+    const timelineSubscription = InvestigationDB.subscribeToTimelineEvents(activeInvestigation.id, (_payload: any) => {
+      console.log("Timeline update:", _payload)
       loadTimelineEvents(activeInvestigation.id)
     })
 
@@ -368,7 +368,7 @@ export function DatabasePoweredInvestigationTracker() {
                       >
                         {investigation.status.toUpperCase()}
                       </Badge>
-                      <span className="text-slate-500">{new Date(investigation.updated_at).toLocaleDateString()}</span>
+                      <span className="text-slate-500">{new Date(investigation.updatedAt).toLocaleDateString()}</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -452,7 +452,7 @@ export function DatabasePoweredInvestigationTracker() {
                           <p className="text-slate-300 text-sm mb-2">{finding.content}</p>
                           <div className="flex items-center justify-between text-xs text-slate-500">
                             <span>{finding.source}</span>
-                            <span>{new Date(finding.created_at).toLocaleString()}</span>
+                            <span>{new Date(finding.timestamp).toLocaleString()}</span>
                           </div>
                         </CardContent>
                       </Card>
@@ -495,13 +495,13 @@ export function DatabasePoweredInvestigationTracker() {
                   <div className="flex justify-between items-center">
                     <span className="text-slate-400 text-sm">Created:</span>
                     <span className="text-white text-sm">
-                      {new Date(activeInvestigation.created_at).toLocaleDateString()}
+                      {new Date(activeInvestigation.createdAt).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-slate-400 text-sm">Updated:</span>
                     <span className="text-white text-sm">
-                      {new Date(activeInvestigation.updated_at).toLocaleDateString()}
+                      {new Date(activeInvestigation.updatedAt).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
@@ -537,13 +537,13 @@ export function DatabasePoweredInvestigationTracker() {
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="text-white text-sm font-medium">{event.title}</h4>
                             <Badge variant="outline" className="text-xs">
-                              {event.event_type}
+                              {event.type}
                             </Badge>
                           </div>
                           <p className="text-slate-400 text-xs mb-2">{event.description}</p>
                           <div className="flex justify-between items-center text-xs text-slate-500">
                             <span>{event.source}</span>
-                            <span>{new Date(event.event_timestamp).toLocaleString()}</span>
+                            <span>{new Date(event.timestamp).toLocaleString()}</span>
                           </div>
                         </div>
                       </div>

@@ -24,7 +24,7 @@ import {
 import { CVEIntelligencePanel } from "./cve-intelligence-panel"
 import { ShodanProInterface } from "./shodan-pro-interface"
 import { getProductVulnerabilityIntel } from "@/lib/cvedb-client"
-import type { ShodanHost } from "@/lib/api-client"
+import type { ShodanHost } from "@/lib/api-integrations"
 
 interface EnhancedHostCardProps {
   host: ShodanHost

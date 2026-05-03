@@ -125,7 +125,7 @@ export function InteractiveSearchResults({ query, loading, resultCount }: Intera
                   }))
                 : [],
             lastSeen: safeGet(match, "timestamp", new Date().toISOString()),
-            threatLevel: (match.vulns && Object.keys(match.vulns).length > 0 ? "high" : "low") as const,
+            threatLevel: (match.vulns && Object.keys(match.vulns).length > 0 ? "high" : "low") as "high" | "low",
             isHoneypot: Array.isArray(match.tags) ? match.tags.includes("honeypot") : false,
             ssl: match.ssl
               ? {

@@ -29,6 +29,22 @@ const API_CONFIG = {
 
 
 
+export interface ShodanResult {
+  ip: string
+  port: number
+  service?: string
+  city: string
+  country: string
+  organization: string
+  vulnerability?: string
+}
+
+export interface ThreatIntelResult {
+  ip: string
+  reputation: string
+  categories: string[]
+}
+
 export interface ShodanHost {
   ip_str: string
   port: number

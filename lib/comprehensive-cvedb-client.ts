@@ -21,6 +21,9 @@ export interface CVEDetails {
   published_date: string | null
   last_modified_date: string | null
   cpes: string[]
+  epss?: number | null
+  kev?: boolean
+  ransomware_campaign?: string | null
 }
 
 export interface CVEWithCPEs extends CVEDetails {}
@@ -30,6 +33,7 @@ export interface CVESearchResult {
   total: number
   limit: number
   skip: number
+  cpes?: string[]
 }
 
 export interface CVEsTotal {
@@ -234,7 +238,7 @@ export async function getCVEDetailsComprehensive(cveId: string): Promise<CVEWith
 // 2. GET /cpes - Search for CPEs by product name with full pagination support
 export async function searchCPEsComprehensive(
   product: string,
-  options: { limit?: number; skip?: number } = {},
+  options: { limit?: number; skip?: number; count?: boolean } = {},
 ): Promise<CPESearchResult> {
   try {
     const cleanProduct = product.trim().toLowerCase()
@@ -277,6 +281,11 @@ export async function searchCVEsComprehensive(
     end_date?: string
     cvss_min?: number
     cvss_max?: number
+    isKev?: boolean
+    sortByEpss?: boolean
+    count?: boolean
+    daysBack?: number
+    getAllPages?: boolean
   } = {},
 ): Promise<CVESearchResult> {
   const cleanProduct = product.trim().toLowerCase()
@@ -289,7 +298,7 @@ export async function searchCVEsComprehensive(
 
     if (result && Array.isArray(result)) {
       const cpes = result.map((item) => item.id || `cpe:2.3:a:*:${cleanProduct}:*:*:*:*:*:*:*:*`)
-      return { cpes: cpes.slice(0, options.limit || 100) }
+      return { cpes: cpes.slice(0, options.limit || 100), cves: [], total: 0, limit: options.limit || 100, skip: options.skip || 0 }
     }
   } catch (error) {
     console.warn(`[CVEDB] CIRCL CVE search failed, using generated CPEs:`, error)
@@ -398,44 +407,38 @@ export async function getComprehensiveProductIntelligence(product: string) {
       cpesResult,
     ] = await Promise.allSettled([
       // Get total CVE count
-      searchCVEsComprehensive({
-        product: cleanProduct,
+      searchCVEsComprehensive(cleanProduct, {
         count: true,
       }),
 
       // Get comprehensive CVE data (up to 500 most relevant)
-      searchCVEsComprehensive({
-        product: cleanProduct,
+      searchCVEsComprehensive(cleanProduct, {
         sortByEpss: true,
         limit: 500,
       }),
 
       // Get KEV CVEs
-      searchCVEsComprehensive({
-        product: cleanProduct,
+      searchCVEsComprehensive(cleanProduct, {
         isKev: true,
         sortByEpss: true,
         limit: 100,
       }),
 
       // Get recent CVEs (last 90 days)
-      searchCVEsComprehensive({
-        product: cleanProduct,
+      searchCVEsComprehensive(cleanProduct, {
         daysBack: 90,
         sortByEpss: true,
         limit: 50,
       }),
 
       // Get high EPSS CVEs
-      searchCVEsComprehensive({
-        product: cleanProduct,
+      searchCVEsComprehensive(cleanProduct, {
         sortByEpss: true,
         limit: 100,
       }),
 
       // Get total CPE count
       searchCPEsComprehensive(cleanProduct, { count: true }),
-
       // Get CPE data
       searchCPEsComprehensive(cleanProduct, { limit: 50 }),
     ])

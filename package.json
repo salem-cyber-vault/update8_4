@@ -48,7 +48,7 @@
     "geist": "1.4.2",
     "input-otp": "latest",
     "lucide-react": "0.540.0",
-    "next": "15.5.15",
+    "next": "15.5.18",
     "next-themes": "latest",
     "react": "19.1.1",
     "react-day-picker": "latest",
@@ -69,7 +69,7 @@
     "@types/react-dom": "19.1.7",
     "eslint": "^9.33.0",
     "eslint-config-next": "^15.5.0",
-    "postcss": "8.5.10",
+    "postcss": "8.5.11",
     "tailwindcss": "4.1.12",
     "typescript": "5.9.2"
   },
